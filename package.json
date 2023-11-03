@@ -21,11 +21,11 @@
 	"contributes": {
 		"customEditors": [
 			{
-				"viewType": "catCustoms.catScratch",
-				"displayName": "Cat Scratch",
+				"viewType": "xueshi.io.avprobe",
+				"displayName": "Audio/Video Probe",
 				"selector": [
 					{
-						"filenamePattern": "*.cscratch"
+						"filenamePattern": "*.mp4"
 					}
 				]
 			},
