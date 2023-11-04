@@ -123,6 +123,16 @@ class AVFileDocument extends Disposable implements vscode.CustomDocument {
 
 }
 
+class MessagePoster {
+	public constructor(private readonly webviewPanel: vscode.WebviewPanel) {
+		this._webViewPanel = webviewPanel;
+	}
+	public postMessage(message: any) {
+		this._webViewPanel.webview.postMessage(message);
+	}
+	private _webViewPanel: vscode.WebviewPanel;
+}
+
 /**
  * Provider for paw draw editors.
  *
@@ -199,11 +209,6 @@ export class AVProbeEditorProvider implements vscode.CustomReadonlyEditorProvide
 				return new Uint8Array(response);
 			}
 		});
-		FFProbe.probeMediaInfo(uri.path).then((info) => {
-			console.log("probeMediaInfo: ", info);
-		}).catch((err) => {
-			console.log("probeMediaInfo error: ", err);
-		});
 		console.log("openCustomDocument: " + uri.path);
 
 		const listeners: vscode.Disposable[] = [];
@@ -245,7 +250,7 @@ export class AVProbeEditorProvider implements vscode.CustomReadonlyEditorProvide
 		};
 		webviewPanel.webview.html = this.getHtmlForWebview(webviewPanel.webview, document);
 
-		webviewPanel.webview.onDidReceiveMessage(e => this.onMessage(document, e));
+		webviewPanel.webview.onDidReceiveMessage(e => this.onMessage(document, e, webviewPanel));
 
 		// Wait for the webview to be properly ready before we init
 		webviewPanel.webview.onDidReceiveMessage(e => {
@@ -273,7 +278,10 @@ export class AVProbeEditorProvider implements vscode.CustomReadonlyEditorProvide
 	private getHtmlForWebview(webview: vscode.Webview, document: AVFileDocument): string {
 		// Local path to script and css for the webview
 		const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(
-			this._context.extensionUri, 'media', 'pawDraw.js'));
+			this._context.extensionUri, 'media', 'avprobe.js'));
+		const scriptJsonViewUri = webview.asWebviewUri(vscode.Uri.joinPath(
+			this._context.extensionUri, 'media', '3rd_party/json_view/jsonview.js'));
+
 
 		const styleResetUri = webview.asWebviewUri(vscode.Uri.joinPath(
 			this._context.extensionUri, 'media', 'reset.css'));
@@ -299,21 +307,27 @@ export class AVProbeEditorProvider implements vscode.CustomReadonlyEditorProvide
 				Use a content security policy to only allow loading images from https or from our extension directory,
 				and only allow scripts that have a specific nonce.
 				-->
-				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} blob:; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
-
+				<!--<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} blob:; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
+				-->
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 				<link href="${styleResetUri}" rel="stylesheet" />
 				<link href="${styleVSCodeUri}" rel="stylesheet" />
 				<link href="${styleMainUri}" rel="stylesheet" />
-
+				<script nonce="${nonce}" src="${scriptJsonViewUri}"></script>
 				<title>Paw Draw</title>
 			</head>
 			<body>
 				<div>
 					<h3>video path: ${filePath}</h3>
+					<div id="buttons">
+						<button id="probe_btn" class="button">Probe</button>
+						<button id="show_packets_btn" class="button">Packets Info</button>
+					</div>
+
 					<hr />
-					<button >Probe</button>
+					<div id="media_info" class="description"></div>
+					<div id="media_info_json" class="description"></div>
 					<dir>
 					</dir>
 				</div>
@@ -337,7 +351,7 @@ export class AVProbeEditorProvider implements vscode.CustomReadonlyEditorProvide
 		panel.webview.postMessage({ type, body });
 	}
 
-	private onMessage(document: AVFileDocument, message: any) {
+	private onMessage(document: AVFileDocument, message: any, webviewPanel: vscode.WebviewPanel) {
 		switch (message.type) {
 			case 'stroke':
 				//document.makeEdit(message as PawDrawEdit);
@@ -347,6 +361,18 @@ export class AVProbeEditorProvider implements vscode.CustomReadonlyEditorProvide
 				{
 					const callback = this._callbacks.get(message.requestId);
 					callback?.(message.body);
+					return;
+				}
+
+			case 'probe':
+				{
+					FFProbe.probeMediaInfo(document.uri.path).then((info) => {
+						console.log("probeMediaInfo: ", info);
+						this.postMessage(webviewPanel, 'media_info', JSON.stringify(info));
+					}).catch((err) => {
+						console.log("probeMediaInfo error: ", err);
+					});
+
 					return;
 				}
 		}

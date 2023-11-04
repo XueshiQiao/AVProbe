@@ -84,8 +84,8 @@
 		}
 
 		_initElements(/** @type {HTMLElement} */ parent) {
-			const colorButtons = /** @type {NodeListOf<HTMLButtonElement>} */ (document.querySelectorAll('.drawing-controls button'));
-			for (const colorButton of colorButtons) {
+			//const colorButtons = /** @type {NodeListOf<HTMLButtonElement>} */ (document.querySelectorAll('.drawing-controls button'));
+/* 			for (const colorButton of colorButtons) {
 				colorButton.addEventListener('click', e => {
 					e.stopPropagation();
 					colorButtons.forEach(button => button.classList.remove('active'));
@@ -110,8 +110,8 @@
 			this.wrapper.append(this.drawingCanvas);
 
 			let isDrawing = false;
-
-			parent.addEventListener('mousedown', () => {
+ */
+/* 			parent.addEventListener('mousedown', () => {
 				if (!this.ready || !this.editable) {
 					return;
 				}
@@ -155,10 +155,10 @@
 				this.drawingCtx.stroke();
 				this.addPoint(x, y);
 			});
-		}
+ */		}
 
 		_redraw() {
-			this.drawingCtx.clearRect(0, 0, this.drawingCanvas.width, this.drawingCanvas.height);
+/* 			this.drawingCtx.clearRect(0, 0, this.drawingCanvas.width, this.drawingCanvas.height);
 			for (const stroke of this.strokes) {
 				this.drawingCtx.strokeStyle = stroke.color;
 				this.drawingCtx.beginPath();
@@ -168,14 +168,14 @@
 				this.drawingCtx.stroke();
 				this.drawingCtx.closePath();
 			}
-		}
+ */		}
 
 		/**
 		 * @param {Uint8Array | undefined} data
 		 * @param {Array<Stroke> | undefined} strokes
 		 */
 		async reset(data, strokes = []) {
-			if (data) {
+/* 			if (data) {
 				const img = await loadImageFromData(data);
 				this.initialCanvas.width = this.drawingCanvas.width = img.naturalWidth;
 				this.initialCanvas.height = this.drawingCanvas.height = img.naturalHeight;
@@ -185,13 +185,13 @@
 
 			this.strokes = strokes;
 			this._redraw();
-		}
+ */		}
 
 		/**
 		 * @param {Array<Stroke> | undefined} strokes
 		 */
 		async resetUntitled(strokes = []) {
-			const size = 100;
+/* 			const size = 100;
 			this.initialCanvas.width = this.drawingCanvas.width = size;
 			this.initialCanvas.height = this.drawingCanvas.height = size;
 
@@ -206,11 +206,11 @@
 
 			this.strokes = strokes;
 			this._redraw();
-		}
+ */		}
 
 		/** @return {Promise<Uint8Array>} */
 		async getImageData() {
-			const outCanvas = document.createElement('canvas');
+/* 			const outCanvas = document.createElement('canvas');
 			outCanvas.width = this.drawingCanvas.width;
 			outCanvas.height = this.drawingCanvas.height;
 
@@ -223,18 +223,21 @@
 			});
 
 			return new Uint8Array(await blob.arrayBuffer());
-		}
+ */		}
 	}
 
 	const editor = new PawDrawEditor(document.querySelector('.drawing-canvas'));
 
+	document.querySelector('#probe_btn').addEventListener('click', e => {
+		vscode.postMessage({ type: 'probe' });
+	});
 	// Handle messages from the extension
 	window.addEventListener('message', async e => {
 		const { type, body, requestId } = e.data;
 		switch (type) {
 			case 'init':
 				{
-					editor.setEditable(body.editable);
+/* 					editor.setEditable(body.editable);
 					if (body.untitled) {
 						await editor.resetUntitled();
 						return;
@@ -243,6 +246,21 @@
 						await editor.reset(body.value);
 						return;
 					}
+ */
+					return;
+				}
+
+			case "media_info":
+				{
+					console.log("media_info: ", body);
+/* 					window.createTreeView("media_info", {
+						treeDataProvider: body
+					});
+*/				/* document.getElementById("media_info").innerText = body; */
+					// you can render json data without creating tree
+					const tree = jsonview.renderJSON(body, document.querySelector('#media_info_json'));
+					jsonview.expand(tree);
+					return;
 				}
 			case 'update':
 				{

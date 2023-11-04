@@ -63,6 +63,7 @@
 	},
 	"dependencies": {
 		"@ffmpeg-installer/ffmpeg": "^1.1.0",
-		"@ffprobe-installer/ffprobe": "^2.1.2"
+		"@ffprobe-installer/ffprobe": "^2.1.2",
+		"@pgrabovets/json-view": "^2.7.5"
 	}
 }
