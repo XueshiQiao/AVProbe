@@ -294,8 +294,8 @@ export class AVProbeEditorProvider implements vscode.CustomReadonlyEditorProvide
 		const styleVSCodeUri = webview.asWebviewUri(vscode.Uri.joinPath(
 			this._context.extensionUri, 'media', 'vscode.css'));
 
-		const styleMainUri = webview.asWebviewUri(vscode.Uri.joinPath(
-			this._context.extensionUri, 'media', 'pawDraw.css'));
+		const styleTableUri = webview.asWebviewUri(vscode.Uri.joinPath(
+			this._context.extensionUri, 'media', 'table.css'));
 
 		const filePath = document.uri.path;
 
@@ -318,7 +318,7 @@ export class AVProbeEditorProvider implements vscode.CustomReadonlyEditorProvide
 
 				<link href="${styleResetUri}" rel="stylesheet" />
 				<link href="${styleVSCodeUri}" rel="stylesheet" />
-				<link href="${styleMainUri}" rel="stylesheet" />
+				<link href="${styleTableUri}" rel="stylesheet" />
 				<script nonce="${nonce}" src="${scriptJsonViewUri}"></script>
 				<title>Paw Draw</title>
 			</head>
@@ -331,8 +331,8 @@ export class AVProbeEditorProvider implements vscode.CustomReadonlyEditorProvide
 					</div>
 
 					<hr />
-					<div id="media_info" class="description"></div>
-					<div id="media_info_json" class="description"></div>
+					<div id="media_info_tree" class="description"></div>
+					<div id="packets_info_table" class="description"></div>
 					<dir>
 					</dir>
 				</div>
@@ -384,7 +384,7 @@ export class AVProbeEditorProvider implements vscode.CustomReadonlyEditorProvide
 				{
 					FFProbe.probeMediaInfoWithCustomArgs(document.uri.path, "-v quiet -hide_banner -print_format json -show_packets").then((info) => {
 						console.log("probeMediaInfo: ", info);
-						this.postMessage(webviewPanel, 'media_info', JSON.stringify(info));
+						this.postMessage(webviewPanel, 'packets', JSON.stringify(info));
 					}).catch((err) => {
 						console.log("probeMediaInfo error: ", err);
 					});
