@@ -5,6 +5,7 @@ import * as child_process from 'child_process';
 import * as util from 'util';
 import * as ffmpeg from '@ffmpeg-installer/ffmpeg';
 import * as ffprobe from '@ffprobe-installer/ffprobe';
+const fs = require("fs");
 
 interface AVFileDocumentDelegate {
 	getFileData(): Promise<Uint8Array>;
@@ -22,14 +23,25 @@ class FFProbe {
 	 * @returns
 	 */
 	public static async probeMediaInfoWithCustomArgs(path: string, params: any): Promise<JSON> {
-		console.log("ffprobe path: " , ffprobe.path, ", version: ", ffprobe.version);
-
-		// call ffmpeg to probe the file
-		// set maxBuffer to 100MB
-
 		const execPromise = util.promisify(child_process.exec);
-		let cmd = `${ffprobe.path}`;
-		// check whether params is array or string
+
+		let cmd = null;
+		const custom_ffprobe_path: any = vscode.workspace.getConfiguration().get('avprobe.ffprobePath');
+		if (custom_ffprobe_path) {
+			if (custom_ffprobe_path.length > 0 && fs.existsSync(custom_ffprobe_path)) {
+				cmd = custom_ffprobe_path;
+				console.log("use custom ffprobe path: ", custom_ffprobe_path);
+			} else {
+				const builtInFFprobePath = ffprobe.path;
+				if (builtInFFprobePath && fs.existsSync(builtInFFprobePath)) {
+					cmd = builtInFFprobePath;
+					console.log("use built-in ffprobe path: ", builtInFFprobePath, ", version:", ffprobe.version);
+				} else {
+					vscode.window.showErrorMessage("Custom ffprobe path may not exist: " + custom_ffprobe_path + ", please make sure it is a valid path.");
+					return Promise.reject("Custom ffprobe path may not exist: " + custom_ffprobe_path + ", please make sure it is a valid path.");
+				}
+			}
+		}
 
 		if (typeof params === 'string') {
 			cmd += ` ${params}`;

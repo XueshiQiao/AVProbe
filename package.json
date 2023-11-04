@@ -10,6 +10,7 @@
 		"type": "git",
 		"url": "https://github.com/XueshiQiao/AVProbe"
 	},
+	"icon": "icon.png",
 	"engines": {
 		"vscode": "^1.74.0"
 	},
@@ -26,10 +27,26 @@
 	"activationEvents": [],
 	"main": "./out/extension.js",
 	"contributes": {
+		"configuration": {
+			"title": "Custom ffmpeg/ffprobe path",
+			"properties": {
+				"avprobe.ffmpegPath": {
+					"type": "string",
+					"default": "",
+					"description": "Custom ffmpeg path"
+				},
+				"avprobe.ffprobePath": {
+					"type": "string",
+					"default": "",
+					"description": "Custom ffprobe path"
+				}
+			}
+		},
 		"customEditors": [
 			{
 				"viewType": "xueshi.io.avprobe",
 				"displayName": "Audio/Video Probe",
+				"priority": "default",
 				"selector": [
 					{
 						"filenamePattern": "*.mp4"
