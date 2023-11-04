@@ -1,18 +1,25 @@
 {
-	"name": "cat-customs",
-	"displayName": "Cat Customs",
-	"description": "Custom Editor API Samples",
+	"name": "avprobe",
+	"displayName": "Audio/Video Probe",
+	"description": "Probe and show information of audio/video files",
 	"version": "0.0.1",
-	"publisher": "vscode-samples",
+	"publisher": "XueshiQiao",
 	"private": true,
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/Microsoft/vscode-extension-samples"
+		"url": "https://github.com/XueshiQiao/AVProbe"
 	},
 	"engines": {
 		"vscode": "^1.74.0"
 	},
+	"keywords": [
+    "probe",
+    "ffprobe",
+    "ffmpeg",
+    "audio",
+		"video"
+  ],
 	"categories": [
 		"Other"
 	],
@@ -26,24 +33,26 @@
 				"selector": [
 					{
 						"filenamePattern": "*.mp4"
-					}
-				]
-			},
-			{
-				"viewType": "catCustoms.pawDraw",
-				"displayName": "Paw Draw",
-				"selector": [
+					},
 					{
-						"filenamePattern": "*.pawdraw"
+						"filenamePattern": "*.mov"
+					},
+					{
+						"filenamePattern": "*.m4a"
+					},
+					{
+						"filenamePattern": "*.mkv"
+					},
+					{
+						"filenamePattern": "*.wav"
+					},
+					{
+						"filenamePattern": "*.aac"
+					},
+					{
+						"filenamePattern": "*.mp3"
 					}
 				]
-			}
-		],
-		"commands": [
-			{
-				"command": "catCustoms.pawDraw.new",
-				"title": "Create new Paw Draw Document",
-				"category": "Paw Draw"
 			}
 		]
 	},
