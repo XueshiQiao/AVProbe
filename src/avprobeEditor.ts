@@ -25,6 +25,8 @@ class FFProbe {
 		console.log("ffprobe path: " , ffprobe.path, ", version: ", ffprobe.version);
 
 		// call ffmpeg to probe the file
+		// set maxBuffer to 100MB
+
 		const execPromise = util.promisify(child_process.exec);
 		let cmd = `${ffprobe.path}`;
 		// check whether params is array or string
@@ -36,7 +38,10 @@ class FFProbe {
 		}
 		cmd += ` ${path}`;
 		console.log("cmd: ", cmd);
-		const { stdout, stderr } = await execPromise(cmd);
+
+		const options = { maxBuffer: 1024 * 1024 * 100 }; // Increasing maxBuffer to 100MB
+		const { stdout, stderr } = await execPromise(cmd, options);
+		console.log("stdout size:", stdout.length);
 		if (stderr) {
 			return Promise.reject(stderr);
 		} else {
@@ -367,6 +372,17 @@ export class AVProbeEditorProvider implements vscode.CustomReadonlyEditorProvide
 			case 'probe':
 				{
 					FFProbe.probeMediaInfo(document.uri.path).then((info) => {
+						console.log("probeMediaInfo: ", info);
+						this.postMessage(webviewPanel, 'media_info', JSON.stringify(info));
+					}).catch((err) => {
+						console.log("probeMediaInfo error: ", err);
+					});
+
+					return;
+				}
+			case 'show_packets':
+				{
+					FFProbe.probeMediaInfoWithCustomArgs(document.uri.path, "-v quiet -hide_banner -print_format json -show_packets").then((info) => {
 						console.log("probeMediaInfo: ", info);
 						this.postMessage(webviewPanel, 'media_info', JSON.stringify(info));
 					}).catch((err) => {
