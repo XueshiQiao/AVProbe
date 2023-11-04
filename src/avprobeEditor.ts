@@ -3,8 +3,9 @@ import { Disposable, disposeAll } from './dispose';
 import { getNonce } from './util';
 import * as child_process from 'child_process';
 import * as util from 'util';
-import * as ffmpeg from '@ffmpeg-installer/ffmpeg';
+/* import * as ffmpeg from '@ffmpeg-installer/ffmpeg';
 import * as ffprobe from '@ffprobe-installer/ffprobe';
+ */
 const fs = require("fs");
 
 interface AVFileDocumentDelegate {
@@ -32,14 +33,8 @@ class FFProbe {
 				cmd = custom_ffprobe_path;
 				console.log("use custom ffprobe path: ", custom_ffprobe_path);
 			} else {
-				const builtInFFprobePath = ffprobe.path;
-				if (builtInFFprobePath && fs.existsSync(builtInFFprobePath)) {
-					cmd = builtInFFprobePath;
-					console.log("use built-in ffprobe path: ", builtInFFprobePath, ", version:", ffprobe.version);
-				} else {
-					vscode.window.showErrorMessage("Custom ffprobe path may not exist: " + custom_ffprobe_path + ", please make sure it is a valid path.");
-					return Promise.reject("Custom ffprobe path may not exist: " + custom_ffprobe_path + ", please make sure it is a valid path.");
-				}
+				vscode.window.showErrorMessage("Custom ffprobe path may not exist: " + custom_ffprobe_path + ", please make sure it is a valid path.");
+				return Promise.reject("Custom ffprobe path may not exist: " + custom_ffprobe_path + ", please configure it in setting with key 'avprobe.ffprobePath'");
 			}
 		}
 
