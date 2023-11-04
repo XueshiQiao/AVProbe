@@ -73,6 +73,21 @@ button.secondary:hover {
 	background: var(--vscode-button-secondaryHoverBackground);
 }
 
+button {
+	width: max-content;
+	height: 34px;
+	display: inline-block;
+	padding: 8px;
+}
+.buttons {
+	margin: 8px;
+}
+
+select {
+	width: max-content;
+	height: 34px;
+}
+
 input:not([type='checkbox']),
 textarea {
 	display: block;

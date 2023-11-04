@@ -12,7 +12,9 @@
 	});
 
 	document.querySelector('#show_packets_btn')?.addEventListener('click', e => {
-		vscode.postMessage({ type: 'show_packets' });
+		const selectStream = document.querySelector('#select_stream')
+		const streamType = selectStream.options[selectStream.selectedIndex].value;
+		vscode.postMessage({ type: 'show_packets', streamType: streamType});
 	});
 	// Handle messages from the extension
 	window.addEventListener('message', async e => {
@@ -39,9 +41,9 @@
 			case "packets":
 				{
 					console.log("show packets: ", body);
+					// get selected value of select_stream "select" tag
 					if (mediaInfoTree) {
-						jsonview.destroy(mediaInfoTree);
-						mediaInfoTree = null;
+						jsonview.collapse(mediaInfoTree);
 					}
 
 					const json = JSON.parse(body);

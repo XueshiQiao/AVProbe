@@ -325,9 +325,16 @@ export class AVProbeEditorProvider implements vscode.CustomReadonlyEditorProvide
 			<body>
 				<div>
 					<h3>video path: ${filePath}</h3>
-					<div id="buttons">
-						<button id="probe_btn" class="button">Probe</button>
-						<button id="show_packets_btn" class="button">Packets Info</button>
+					<div class="buttons">
+						<button id="probe_btn" class="button">Probe all media file</button>
+					</div>
+					<div class="buttons">
+						<select id="select_stream">
+							<option value="0">All</option>
+							<option value="1">Audio</option>
+							<option value="2">Video</option>
+						</select>
+						<button id="show_packets_btn" class="button">Show packets in stream</button>
 					</div>
 
 					<hr />
@@ -382,7 +389,14 @@ export class AVProbeEditorProvider implements vscode.CustomReadonlyEditorProvide
 				}
 			case 'show_packets':
 				{
-					FFProbe.probeMediaInfoWithCustomArgs(document.uri.path, "-v quiet -hide_banner -print_format json -show_packets").then((info) => {
+					const streamType = message.streamType == 0 ? "all" : (message.streamType == 1 ? "audio" : "video");
+					let args = "-v quiet -hide_banner -print_format json -show_packets";
+					if (streamType === "audio") {
+						args += " -select_streams a";
+					} else if (streamType === "video") {
+						args += " -select_streams v";
+					}
+					FFProbe.probeMediaInfoWithCustomArgs(document.uri.path, args).then((info) => {
 						console.log("probeMediaInfo: ", info);
 						this.postMessage(webviewPanel, 'packets', JSON.stringify(info));
 					}).catch((err) => {
