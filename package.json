@@ -60,5 +60,9 @@
 		"@typescript-eslint/parser": "^5.42.0",
 		"eslint": "^8.26.0",
 		"typescript": "^5.1.3"
+	},
+	"dependencies": {
+		"@ffmpeg-installer/ffmpeg": "^1.1.0",
+		"@ffprobe-installer/ffprobe": "^2.1.2"
 	}
 }

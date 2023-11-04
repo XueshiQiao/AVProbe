@@ -252,6 +252,7 @@ export class PawDrawEditorProvider implements vscode.CustomEditorProvider<PawDra
 			}
 		});
 
+
 		const listeners: vscode.Disposable[] = [];
 
 		listeners.push(document.onDidChange(e => {

@@ -1,9 +1,48 @@
 import * as vscode from 'vscode';
 import { Disposable, disposeAll } from './dispose';
 import { getNonce } from './util';
+import * as child_process from 'child_process';
+import * as util from 'util';
+import * as ffmpeg from '@ffmpeg-installer/ffmpeg';
+import * as ffprobe from '@ffprobe-installer/ffprobe';
 
 interface AVFileDocumentDelegate {
 	getFileData(): Promise<Uint8Array>;
+}
+
+class FFProbe {
+	public static async probeMediaInfo(path: string): Promise<JSON> {
+		return await this.probeMediaInfoWithCustomArgs(path, "-hide_banner -v quiet -print_format json -show_format -show_streams");
+	}
+
+	/**
+	 * Probe media files using ffprobe
+	 * @param path media file path, e.g. /home/super_hero/1.mp4
+	 * @param params string or array of string, e.g. ['-v', 'quiet', '-print_format', 'json', '-show_format', '-show_streams']
+	 * @returns
+	 */
+	public static async probeMediaInfoWithCustomArgs(path: string, params: any): Promise<JSON> {
+		console.log("ffprobe path: " , ffprobe.path, ", version: ", ffprobe.version);
+
+		// call ffmpeg to probe the file
+		const execPromise = util.promisify(child_process.exec);
+		let cmd = `${ffprobe.path}`;
+		// check whether params is array or string
+
+		if (typeof params === 'string') {
+			cmd += ` ${params}`;
+		} else if (Array.isArray(params)) {
+			cmd += ` ${params.join(' ')}`;
+		}
+		cmd += ` ${path}`;
+		console.log("cmd: ", cmd);
+		const { stdout, stderr } = await execPromise(cmd);
+		if (stderr) {
+			return Promise.reject(stderr);
+		} else {
+			return Promise.resolve(JSON.parse(stdout));
+		}
+	}
 }
 
 /**
@@ -18,16 +57,12 @@ class AVFileDocument extends Disposable implements vscode.CustomDocument {
 	): Promise<AVFileDocument | PromiseLike<AVFileDocument>> {
 		// If we have a backup, read that. Otherwise read the resource from the workspace
 		const dataFile = typeof backupId === 'string' ? vscode.Uri.parse(backupId) : uri;
-		const fileData = await AVFileDocument.readFile(dataFile);
+		const fileData = new Uint8Array();
+		// don't read file directly, use delegate
 		return new AVFileDocument(uri, fileData, delegate);
 	}
 
-	private static async readFile(uri: vscode.Uri): Promise<Uint8Array> {
-		if (uri.scheme === 'untitled') {
-			return new Uint8Array();
-		}
-		return new Uint8Array(await vscode.workspace.fs.readFile(uri));
-	}
+
 
 	private readonly _uri: vscode.Uri;
 
@@ -164,6 +199,12 @@ export class AVProbeEditorProvider implements vscode.CustomReadonlyEditorProvide
 				return new Uint8Array(response);
 			}
 		});
+		FFProbe.probeMediaInfo(uri.path).then((info) => {
+			console.log("probeMediaInfo: ", info);
+		}).catch((err) => {
+			console.log("probeMediaInfo error: ", err);
+		});
+		console.log("openCustomDocument: " + uri.path);
 
 		const listeners: vscode.Disposable[] = [];
 
@@ -202,7 +243,7 @@ export class AVProbeEditorProvider implements vscode.CustomReadonlyEditorProvide
 		webviewPanel.webview.options = {
 			enableScripts: true,
 		};
-		webviewPanel.webview.html = this.getHtmlForWebview(webviewPanel.webview);
+		webviewPanel.webview.html = this.getHtmlForWebview(webviewPanel.webview, document);
 
 		webviewPanel.webview.onDidReceiveMessage(e => this.onMessage(document, e));
 
@@ -226,12 +267,10 @@ export class AVProbeEditorProvider implements vscode.CustomReadonlyEditorProvide
 		});
 	}
 
-	//#endregion
-
 	/**
 	 * Get the static HTML used for in our editor's webviews.
 	 */
-	private getHtmlForWebview(webview: vscode.Webview): string {
+	private getHtmlForWebview(webview: vscode.Webview, document: AVFileDocument): string {
 		// Local path to script and css for the webview
 		const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(
 			this._context.extensionUri, 'media', 'pawDraw.js'));
@@ -244,6 +283,8 @@ export class AVProbeEditorProvider implements vscode.CustomReadonlyEditorProvide
 
 		const styleMainUri = webview.asWebviewUri(vscode.Uri.joinPath(
 			this._context.extensionUri, 'media', 'pawDraw.css'));
+
+		const filePath = document.uri.path;
 
 		// Use a nonce to whitelist which scripts can be run
 		const nonce = getNonce();
@@ -269,14 +310,12 @@ export class AVProbeEditorProvider implements vscode.CustomReadonlyEditorProvide
 				<title>Paw Draw</title>
 			</head>
 			<body>
-				<div class="drawing-canvas"></div>
-
-				<div class="drawing-controls">
-					<button data-color="black" class="black active" title="Black"></button>
-					<button data-color="white" class="white" title="White"></button>
-					<button data-color="red" class="red" title="Red"></button>
-					<button data-color="green" class="green" title="Green"></button>
-					<button data-color="blue" class="blue" title="Blue"></button>
+				<div>
+					<h3>video path: ${filePath}</h3>
+					<hr />
+					<button >Probe</button>
+					<dir>
+					</dir>
 				</div>
 
 				<script nonce="${nonce}" src="${scriptUri}"></script>
