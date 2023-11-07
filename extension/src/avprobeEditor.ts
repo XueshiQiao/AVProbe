@@ -33,10 +33,12 @@ class FFProbe {
 			if (custom_ffprobe_path.length > 0 && fs.existsSync(custom_ffprobe_path)) {
 				cmd = custom_ffprobe_path;
 				console.log("use custom ffprobe path: ", custom_ffprobe_path);
-			} else {
-				vscode.window.showErrorMessage("Custom ffprobe path may not exist: " + custom_ffprobe_path + ", please make sure it is a valid path.");
-				return Promise.reject("Custom ffprobe path may not exist: " + custom_ffprobe_path + ", please configure it in setting with key 'avprobe.ffprobePath'");
 			}
+		}
+
+		if (custom_ffprobe_path == null || custom_ffprobe_path.length == 0) {
+			vscode.window.showErrorMessage("Custom ffprobe path may not exist: " + custom_ffprobe_path + ", please make sure it is a valid path.");
+			return Promise.reject("Custom ffprobe path may not exist: " + custom_ffprobe_path + ", please configure it in setting with key 'avprobe.ffprobePath'");
 		}
 
 		if (typeof params === 'string') {
