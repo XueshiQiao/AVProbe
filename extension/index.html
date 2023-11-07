@@ -1,0 +1,31 @@
+<script type="importmap">
+  {
+    "imports": {
+      "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js"
+    }
+  }
+</script>
+
+<div id="app">{{ message }}
+
+	<button @click="inc">+1</button>
+	<input v-model="count" />
+</div>
+
+<script type="module">
+  import { createApp, ref } from 'vue'
+
+  createApp({
+    data() {
+      return {
+        message: 'Hello Vue!',
+				count: ref(0)
+      }
+    },
+		methods: {
+			inc() {
+				this.count++
+			}
+		}
+  }).mount('#app')
+</script>

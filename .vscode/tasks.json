@@ -15,6 +15,31 @@
 				"kind": "build",
 				"isDefault": true
 			}
+		},
+		{
+			"type": "npm",
+			"script": "compile",
+			"path": "extension",
+			"group": "build",
+			"problemMatcher": [],
+			"label": "npm: compile - extension",
+			// 进入 extension 目录，执行 执行编译
+			"detail": "cd extension; npm run compile"
+		},
+		{
+			"type": "npm",
+			"script": "build",
+			"path": "ui",
+			"group": "build",
+			"problemMatcher": [],
+			"label": "npm: build --ui",
+			// 进入 ui 目录，执行 build 操作，把 vue 相关文件打包为 js/css 文件
+			"detail": "cd ui; npm run build"
+		},
+		{
+			// this task depends on the two tasks above
+			"label": "build extension and ui",
+			"dependsOn":["npm: compile - extension", "npm: build --ui"]
 		}
 	]
 }

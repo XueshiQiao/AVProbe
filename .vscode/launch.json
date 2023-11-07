@@ -9,10 +9,12 @@
 			"name": "Run Extension",
 			"type": "extensionHost",
 			"request": "launch",
+			"cwd": "${workspaceFolder}/extension/",
 			"runtimeExecutable": "${execPath}",
-			"args": ["--extensionDevelopmentPath=${workspaceRoot}"],
-			"outFiles": ["${workspaceFolder}/out/**/*.js"],
-			"preLaunchTask": "npm: compile"
+			"args": ["--extensionDevelopmentPath=${workspaceRoot}/extension/"],
+			"outFiles": ["${workspaceFolder}/extension/out/**/*.js"],
+			// ref to task.json, task with label: "npm: compile - extension"
+			"preLaunchTask": "build extension and ui"
 		}
 	]
 }
