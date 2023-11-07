@@ -3,6 +3,7 @@ import { Disposable, disposeAll } from './dispose';
 import { getNonce } from './util';
 import * as child_process from 'child_process';
 import * as util from 'util';
+import * as path from "path";
 /* import * as ffmpeg from '@ffmpeg-installer/ffmpeg';
 import * as ffprobe from '@ffprobe-installer/ffprobe';
  */
@@ -259,8 +260,13 @@ export class AVProbeEditorProvider implements vscode.CustomReadonlyEditorProvide
 		// Setup initial content for the webview
 		webviewPanel.webview.options = {
 			enableScripts: true,
+			localResourceRoots: [
+				vscode.Uri.file(
+						path.join(this._context.extensionPath, "vue-dist", "assets")
+				),
+			],
 		};
-		webviewPanel.webview.html = this.getHtmlForWebview(webviewPanel.webview, document);
+		webviewPanel.webview.html = this.getHtmlForWebview(webviewPanel.webview, webviewPanel, document);
 
 		webviewPanel.webview.onDidReceiveMessage(e => this.onMessage(document, e, webviewPanel));
 
@@ -287,7 +293,7 @@ export class AVProbeEditorProvider implements vscode.CustomReadonlyEditorProvide
 	/**
 	 * Get the static HTML used for in our editor's webviews.
 	 */
-	private getHtmlForWebview(webview: vscode.Webview, document: AVFileDocument): string {
+	private getHtmlForWebview(webview: vscode.Webview, webviewPanel: vscode.WebviewPanel, document: AVFileDocument): string {
 		// Local path to script and css for the webview
 		const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(
 			this._context.extensionUri, 'media', 'avprobe.js'));
@@ -306,6 +312,20 @@ export class AVProbeEditorProvider implements vscode.CustomReadonlyEditorProvide
 
 		const filePath = document.uri.path;
 
+		const dependencyNameList: string[] = [
+			"index.css",
+			"index.js",
+			"vendor.js",
+			"logo.png",
+	];
+	const dependencyList: vscode.Uri[] = dependencyNameList.map((item) =>
+		webviewPanel.webview.asWebviewUri(
+				vscode.Uri.file(
+					path.join(this._context.extensionPath, "vue-dist", "assets", item)
+				)
+		)
+	);
+
 		// Use a nonce to whitelist which scripts can be run
 		const nonce = getNonce();
 
@@ -322,36 +342,21 @@ export class AVProbeEditorProvider implements vscode.CustomReadonlyEditorProvide
 				<!--<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} blob:; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
 				-->
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+				<!--
 				<link href="${styleResetUri}" rel="stylesheet" />
 				<link href="${styleVSCodeUri}" rel="stylesheet" />
 				<link href="${styleTableUri}" rel="stylesheet" />
-				<script nonce="${nonce}" src="${scriptJsonViewUri}"></script>
-				<title>Paw Draw</title>
+				<script nonce="${nonce}" src="${scriptJsonViewUri}"></script>-->
+				<title>AVProbe</title>
+				<script>
+					const vscode = acquireVsCodeApi();
+				</script>
+				<script type="module" crossorigin src="${dependencyList[1]}"></script>
+				<link rel="modulepreload" href="${dependencyList[2]}">
+				<link rel="stylesheet" href="${dependencyList[0]}">
 			</head>
 			<body>
-				<div>
-					<h3>video path: ${filePath}</h3>
-					<div class="buttons">
-						<button id="probe_btn" class="button">Probe all media file</button>
-					</div>
-					<div class="buttons">
-						<select id="select_stream">
-							<option value="0">All</option>
-							<option value="1">Audio</option>
-							<option value="2">Video</option>
-						</select>
-						<button id="show_packets_btn" class="button">Show packets in stream</button>
-					</div>
-
-					<hr />
-					<div id="media_info_tree" class="description"></div>
-					<div id="packets_info_table" class="description"></div>
-					<dir>
-					</dir>
-				</div>
-
-				<script nonce="${nonce}" src="${scriptUri}"></script>
+				<div id="app"></div>
 			</body>
 			</html>`;
 	}
