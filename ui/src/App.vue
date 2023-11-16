@@ -6,6 +6,13 @@
 import Header from "./components/Header.vue";
 </script>
 
+<script>
+export default {
+  created() {
+  }
+}
+</script>
+
 <template>
   <!-- <header>
   </header> -->

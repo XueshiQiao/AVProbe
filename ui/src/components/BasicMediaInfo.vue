@@ -7,6 +7,7 @@ export default {
     console.log("BasicMediaInfo.vue created");
     window.addEventListener("message", async (e) => {
       const { type, body, requestId } = e.data;
+      console.log("BasicMediaInfo Receive ", type, " message from vscode extension, body: ", body)
       switch (type) {
         case "media_info": {
           this.mediaInfo = JSON.parse(body);
@@ -31,6 +32,9 @@ export default {
             this.streamsInfo = this.mediaInfo["streams"];
           }
           return;
+        };
+        case "init": {
+
         }
       }
     });
@@ -41,6 +45,14 @@ export default {
       mediaInfo: ref({}),
       formatInfo: ref({}),
       streamsInfo: ref([]),
+      descriptionColumn: {
+        xxl: 1,
+        xl: 1,
+        lg: 1,
+        md: 1,
+        sm: 1,
+        xs: 1,
+      },
     };
   },
   methods: {},
@@ -50,7 +62,7 @@ export default {
   <a-flex gap="middle" vertical>
     <!-- check whether formatInfo is empty:  -->
     <a-card title="Basic Media Info" v-if="Object.keys(formatInfo).length > 0">
-      <a-descriptions title="" bordered size="small" column="2">
+      <a-descriptions title="" bordered size="small" :column="descriptionColumn">
         <!-- iterator all key values in mediaInfo['format'] -->
         <a-descriptions-item v-for="(value, key) in formatInfo" :key="key" :label="key">{{
           value
@@ -64,7 +76,7 @@ export default {
           title=""
           bordered
           size="small"
-          :column="{ xxl: 4, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }"
+          :column="descriptionColumn"
         >
           <a-descriptions-item v-for="(value, key) in stream" :key="key" :label="key">{{
             value
