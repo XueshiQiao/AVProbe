@@ -34,7 +34,6 @@ export default {
 };
 </script>
 <template>
-  message : {{ message }}
   <a-flex gap="middle" vertical>
     <!-- check whether formatInfo is empty:  -->
     <a-card title="Basic Media Info" v-if="Object.keys(formatInfo).length > 0">

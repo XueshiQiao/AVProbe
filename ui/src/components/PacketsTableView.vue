@@ -1,9 +1,11 @@
 <template>
-  <a-table :columns="columns" :dataSource="packetsInfo" bordered>
-    <template #bodyCell="{ column, text, record }">
-      {{ text }}
-    </template>
-  </a-table>
+  <a-card :title="'Total frames:' + packetsInfo.length" v-if="packetsInfo.length > 0">
+    <a-table :columns="columns" :dataSource="packetsInfo" bordered>
+      <template #bodyCell="{ column, text, record }">
+        {{ text }}
+      </template>
+    </a-table>
+  </a-card>
 </template>
 <script setup></script>
 

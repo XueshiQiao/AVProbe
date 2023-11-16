@@ -7,11 +7,6 @@ import PacketsTableView from "./PacketsTableView.vue";
 export default {
 	name: "Header",
 	props: {
-		message: {
-			type: String,
-			required: false,
-			default: 'Hello, world!'
-		}
 	},
   // life cycle method
   created() {
