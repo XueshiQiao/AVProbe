@@ -3,7 +3,7 @@
 // import TheWelcome from './components/TheWelcome.vue'
 // import TableViewAnt from './components/TableViewAnt.vue';
 // import TreeViewAnt from './components/TreeViewAnt.vue';
-import Header from './components/Header.vue';
+import Header from "./components/Header.vue";
 </script>
 
 <template>
@@ -13,8 +13,8 @@ import Header from './components/Header.vue';
     <Header />
   </div>
   <!-- <main> -->
-    <!-- <Header></Header> -->
-    <!-- <TableViewAnt /> -->
+  <!-- <Header></Header> -->
+  <!-- <TableViewAnt /> -->
   <!-- </main> -->
 </template>
 
