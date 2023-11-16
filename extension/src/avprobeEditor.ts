@@ -347,30 +347,36 @@ export class AVProbeEditorProvider implements vscode.CustomReadonlyEditorProvide
 		// <script nonce="${nonce}" src="${scriptJsonViewUri}"></script>
 
 		return /* html */`
-			<!DOCTYPE html>
-			<html lang="en">
+		<!DOCTYPE html>
+		<html lang="en">
 			<head>
-				<meta charset="UTF-8">
+				<meta name="viewport" content="width=device-width, initial-scale=1">
 
-				<!--
-				Use a content security policy to only allow loading images from https or from our extension directory,
-				and only allow scripts that have a specific nonce.
-				-->
-				<!--<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} blob:; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
-				-->
-				<meta name="viewport" content="width=device-width, initial-scale=1.0">
-				<title>AVProbe</title>
+
+				<title>AVProbe extension</title>
+				<style>
+					body {
+						padding: 20px;
+					}
+				</style>
 				<script>
 					const vscode = acquireVsCodeApi();
 				</script>
+				<link href="${styleVSCodeUri}" rel="stylesheet" />
 				<script type="module" crossorigin src="${dependencyList[1]}"></script>
-				<link rel="modulepreload" href="${dependencyList[2]}">
-				<link rel="stylesheet" href="${dependencyList[0]}">
+				<!-- <link rel="modulepreload" href="${dependencyList[2]}"> -->
+				<link rel="stylesheet" href="${dependencyList[0]}" />
+
 			</head>
-			<body>
-				<div id="app" style="width=100%;" ></div>
+			<!-- 必须覆盖掉 body 的 display，覆盖之前是 flex，页面会错乱掉 -->
+			<body style="display: block;">
+			<div>
+				<hr/>
+				<div id="application"></div>
 			</body>
-			</html>`;
+		</html>
+
+			`;
 	}
 
 	private _requestId = 1;

@@ -13,6 +13,7 @@
 			"runtimeExecutable": "${execPath}",
 			"args": ["--extensionDevelopmentPath=${workspaceRoot}/extension/"],
 			"outFiles": ["${workspaceFolder}/extension/out/**/*.js"],
+			"sourceMaps": true,
 			// ref to task.json, task with label: "npm: compile - extension"
 			"preLaunchTask": "build extension and ui"
 		}
