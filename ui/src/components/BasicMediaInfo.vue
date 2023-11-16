@@ -18,9 +18,9 @@ export default {
 							this.formatInfo = Object.fromEntries(
 								Object.entries(this.mediaInfo['format']).filter(([key, value]) => {
 									console.log("key:", key, ":", value)
-									return key !== 'filename';
+									return key !== 'filename'
 								})
-							);
+							)
 						}
 						if (this.mediaInfo && this.mediaInfo['streams'] !== undefined) {
 							this.streamsInfo = this.mediaInfo['streams'];
@@ -44,15 +44,22 @@ export default {
 };
 </script>
 <template>
-	<div>Basic Info</div>
-	<a-card title="Basic Media Info">
-		<!-- check whether formatInfo is empty:  -->
-		<a-descriptions title="" bordered size="small" v-if="Object.keys(formatInfo).length > 0">
-			<!-- iterator all key values in mediaInfo['format'] -->
-			<a-descriptions-item v-for="(value, key) in formatInfo" :key="key" :label="key" v-if="key !== 'filename'">{{ value }}</a-descriptions-item>
-		</a-descriptions>
-	</a-card>
-	<a-card>
+	<a-flex gap='middle' vertical>
+		<a-card title="Basic Media Info">
+			<!-- check whether formatInfo is empty:  -->
+			<a-descriptions title="" bordered size="small" column="2" v-if="Object.keys(formatInfo).length > 0">
+				<!-- iterator all key values in mediaInfo['format'] -->
+				<a-descriptions-item v-for="(value, key) in formatInfo" :key="key" :label="key">{{ value }}</a-descriptions-item>
+			</a-descriptions>
+		</a-card>
 
-	</a-card>
+		<template v-for="stream in streamsInfo" key="stream.index">
+			<a-card :title="`Stream ${stream['index']} : ${stream['codec_type']}`">
+				<a-descriptions title="" bordered size="small" :column="{ xxl: 4, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }">
+					<!-- iterator all key values in mediaInfo['format'] -->
+					<a-descriptions-item v-for="(value, key) in stream" :key="key" :label="key" v-if="key !== 'index' && key != 'codec_type'">{{ value }}</a-descriptions-item>
+				</a-descriptions>
+			</a-card>
+		</template>
+	</a-flex>
 </template>

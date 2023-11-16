@@ -26,10 +26,9 @@ export default {
 	},
 	data() {
 		return {
-			filePath: "test",
-			fileSize: "0 MB",
-			filePathDisabled: false,
-			isInfoVisible: false,
+			filePath: ref(""),
+			fileSize: ref("0 MB"),
+			isInfoVisible: ref(false),
 			size: ref('default'),
 			gapSize : ref('small'),
 			customGapSize : ref(0),
@@ -43,10 +42,6 @@ export default {
 		showPackets() {
 			// Logic to show packets would go here
 			// vscode.postMessage({ type: 'show_packets', streamType: streamType });
-		},
-		onChange(e) {
-			console.log('size checked', e.target.value);
-			size.value = e.target.value;
 		},
 	}
 }
