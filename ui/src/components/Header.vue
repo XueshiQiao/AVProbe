@@ -108,45 +108,35 @@ export default {
 </script>
 
 <template>
-  <a-row>
-    <a-col :span="24">
-      <a-card title="Basic Info">
-        <a-descriptions title="" bordered size="small" :column="{ xxl: 1, xl: 1, lg: 1, md: 1, sm: 1, xs: 1 }">
-          <a-descriptions-item label="Path">{{ fileInfo['filePath'] }}</a-descriptions-item>
-          <a-descriptions-item label="Size"
-            >{{ fileInfo['fileSize'] / 1000.0 / 1000.0 }} MB</a-descriptions-item
-          >
-        </a-descriptions>
-      </a-card>
-    </a-col>
-  </a-row>
-  <a-row>
-    <a-space size="middle">
-      <a-button type="primary" @click="showInformation">Show Information</a-button>
-      <a-select :options="options" v-model:value="selectedOption">
-        <a-select-option value="all" select>All</a-select-option>
-        <a-select-option value="audio">Audio</a-select-option>
-        <a-select-option value="video">Video</a-select-option>
-      </a-select>
-      <a-button @click="showPackets">Show Packets</a-button>
-    </a-space>
-  </a-row>
+	<a-flex gap="middle" vertical>
+		<a-row>
+			<a-col :span="24">
+				<a-card title="Basic Info">
+					<a-descriptions title="" bordered size="small" :column="{ xxl: 1, xl: 1, lg: 1, md: 1, sm: 1, xs: 1 }">
+						<a-descriptions-item label="Path">{{ fileInfo['filePath'] }}</a-descriptions-item>
+						<a-descriptions-item label="Size"
+							>{{ fileInfo['fileSize'] / 1000.0 / 1000.0 }} MB</a-descriptions-item
+						>
+					</a-descriptions>
+				</a-card>
+			</a-col>
+		</a-row>
 
-  <!-- <a-row>
-    <a-col :span="24">
-      <a-divider />
-      <div v-if="isInfoVisible" class="info-display">
-        <a-card>
-          <p>No specific information to display.</p>
-        </a-card>
-      </div>
-      <a-divider />
-    </a-col>
-  </a-row> -->
+		<a-row>
+			<a-space size="middle">
+				<a-button type="primary" @click="showInformation">Show Information</a-button>
+				<a-select :options="options" v-model:value="selectedOption">
+					<a-select-option value="all" select>All</a-select-option>
+					<a-select-option value="audio">Audio</a-select-option>
+					<a-select-option value="video">Video</a-select-option>
+				</a-select>
+				<a-button @click="showPackets">Show Packets</a-button>
+			</a-space>
+		</a-row>
 
-  <a-divider />
-  <BasicMediaInfo :formatInfo="formatInfo" :streamsInfo="streamsInfo" />
-  <PacketsTableView :packetsInfo="packetsInfo"/>
+		<BasicMediaInfo :formatInfo="formatInfo" :streamsInfo="streamsInfo" />
+		<PacketsTableView :packetsInfo="packetsInfo"/>
+	</a-flex>
 </template>
 
 <style scoped>

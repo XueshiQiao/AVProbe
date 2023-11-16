@@ -20,14 +20,7 @@ export default {
   },
   data() {
     return {
-      descriptionColumn: {
-        xxl: 1,
-        xl: 1,
-        lg: 1,
-        md: 1,
-        sm: 1,
-        xs: 1,
-      },
+      descriptionColumn: { xxl: 2, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 },
     };
   },
   methods: {},
