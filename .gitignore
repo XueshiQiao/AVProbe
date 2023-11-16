@@ -197,3 +197,4 @@ dist
 
 
 *.mp4
+extension/vue-dist/**
