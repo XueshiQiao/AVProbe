@@ -2,7 +2,7 @@
 
 Show information of Audio/Video files via built-in ffmpeg/ffprobe.
 Supported functionality:
-* [x] Support mp4/mkv
+* [x] Support mp4/mkv/mov and others
 * [x] Show basic information(streams, formats and so on)
 * [x] Show every packets of each stream
 * [] Show other information
