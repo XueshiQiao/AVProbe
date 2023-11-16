@@ -413,7 +413,8 @@ export class AVProbeEditorProvider implements vscode.CustomReadonlyEditorProvide
 				}
 			case 'show_packets':
 				{
-					const streamType = message.streamType == 0 ? "all" : (message.streamType == 1 ? "audio" : "video");
+					// [all, audio, video]
+					const streamType = message.streamType;// == 0 ? "all" : (message.streamType == 1 ? "audio" : "video");
 					let args = "-v quiet -hide_banner -print_format json -show_packets";
 					if (streamType === "audio") {
 						args += " -select_streams a";

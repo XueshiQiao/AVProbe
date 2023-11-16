@@ -18,13 +18,13 @@ export default {
 		console.log("Header.vue created");
 		this.options = ref([{
 			label: 'All Streams',
-			value: 'All Streams'
+			value: 'all'
 		}, {
 			label: 'Audio',
-			value: 'Audio'
+			value: 'audio'
 		}, {
 			label: 'Video',
-			value: 'Video'
+			value: 'video'
 		}])
 		this.selectedOption = ref(this.options[0].value)
 
@@ -65,7 +65,15 @@ export default {
 						this.streamsInfo = this.mediaInfo["streams"];
           }
           return;
-        };
+				};
+				case "packets": {
+					const packetsDict = JSON.parse(body);
+					if (packetsDict && packetsDict["packets"] !== undefined && Array.isArray(packetsDict["packets"])) {
+						this.packetsInfo = packetsDict["packets"];
+					}
+					console.log("Header.vue Receive 'packets' message from vscode extension, packets: ", this.packetsInfo);
+					return
+				}
       }
 		});
 
@@ -84,6 +92,7 @@ export default {
 			mediaInfo: ref({}),
       formatInfo: ref({}),
 			streamsInfo: ref([]),
+			packetsInfo: ref([]),
 			// ----------------
     };
   },
@@ -93,9 +102,8 @@ export default {
       vscode.postMessage({ type: "probe" });
     },
     showPackets() {
-      // Logic to show packets would go here
-			// vscode.postMessage({ type: 'show_packets', streamType: streamType });
 			console.log("showPackets: ", this.selectedOption);
+			vscode.postMessage({ type: 'show_packets', streamType: this.selectedOption });
     },
   },
 };
@@ -140,7 +148,7 @@ export default {
 
   <a-divider />
   <BasicMediaInfo :formatInfo="formatInfo" :streamsInfo="streamsInfo" />
-  <PacketsTableView />
+  <PacketsTableView :packetsInfo="packetsInfo"/>
 </template>
 
 <style scoped>
