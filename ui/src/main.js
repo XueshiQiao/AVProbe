@@ -7,4 +7,4 @@ import Antd from 'ant-design-vue';
 import 'ant-design-vue/dist/reset.css';
 
 const app = createApp(Header);
-app.use(Antd).mount('#application')
+app.use(Antd).mount('#app')
