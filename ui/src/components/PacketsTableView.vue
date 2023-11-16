@@ -1,24 +1,11 @@
-<template v-if="packetsInfo.length > 0">
-  <a-table :columns="columns" :data-source="dataSource" bordered>
+<template>
+  <a-table :columns="columns" :dataSource="packetsInfo" bordered>
     <template #bodyCell="{ column, text, record }">
-      <template v-if="['name', 'age', 'address'].includes(column.dataIndex)">
-        <div>
-          <!-- <a-input
-            v-if="editableData[record.key]"
-            v-model:value="editableData[record.key][column.dataIndex]"
-            style="margin: -5px 0"
-          /> -->
-          <!-- <template v-else> -->
-          {{ text }}
-          <!-- </template> -->
-        </div>
-      </template>
+      {{ text }}
     </template>
   </a-table>
 </template>
-<script setup>
-// import { cloneDeep } from "lodash-es";
-</script>
+<script setup></script>
 
 <script>
 import { ref } from "vue";
@@ -32,39 +19,63 @@ export default {
     },
   },
   data() {
-		return {
-			columns: ref([
-				{
-					title: "name",
-					dataIndex: "name",
-					width: "25%",
-				},
-				{
-					title: "age",
-					dataIndex: "age",
-					width: "15%",
-				},
-				{
-					title: "address",
-					dataIndex: "address",
-					width: "40%",
-				},
-			]),
-			dataSource: ref([])
-		};
+    return {
+      columns: ref([
+        {
+          title: "codec_type",
+          dataIndex: "codec_type",
+          key: "codec_type",
+        },
+        {
+          title: "pts",
+          dataIndex: "pts",
+          key: "pts",
+        },
+        {
+          title: "pts_time",
+          dataIndex: "pts_time",
+          key: "pts_time",
+        },
+        {
+          title: "dts",
+          dataIndex: "dts",
+          key: "dts",
+        },
+        {
+          title: "dts_time",
+          dataIndex: "dts_time",
+          key: "dts_time",
+        },
+        {
+          title: "duration",
+          dataIndex: "duration",
+          key: "duration",
+        },
+        {
+          title: "duration_time",
+          dataIndex: "duration_time",
+          key: "duration_time",
+        },
+        {
+          title: "size",
+          dataIndex: "size",
+          key: "size",
+        },
+        {
+          title: "pos",
+          dataIndex: "pos",
+          key: "pos",
+        },
+        {
+          title: "flags",
+          dataIndex: "flags",
+          key: "flags",
+        },
+      ]),
+      dataSource: ref([]),
+    };
   },
-	created() {
-		const data = []
-    for (let i = 0; i < 100; i++) {
-      data.push({
-        key: i.toString(),
-        name: `Edrward ${i}`,
-        age: 32,
-        address: `London Park no. ${i}`,
-      });
-		}
-		this.dataSource = data
-  },
+  created() {},
 };
 </script>
 

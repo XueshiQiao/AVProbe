@@ -70,6 +70,9 @@ export default {
 					const packetsDict = JSON.parse(body);
 					if (packetsDict && packetsDict["packets"] !== undefined && Array.isArray(packetsDict["packets"])) {
 						this.packetsInfo = packetsDict["packets"];
+						this.packetsInfo.forEach((packet, index) => {
+							packet["key"] = index.toString();
+						});
 					}
 					console.log("Header.vue Receive 'packets' message from vscode extension, packets: ", this.packetsInfo);
 					return
