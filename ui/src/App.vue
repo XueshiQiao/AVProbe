@@ -1,25 +1,36 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
-import TableViewAnt from './components/TableViewAnt.vue';
-import TreeViewAnt from './components/TreeViewAnt.vue';
+// import HelloWorld from './components/HelloWorld.vue'
+// import TheWelcome from './components/TheWelcome.vue'
+// import TableViewAnt from './components/TableViewAnt.vue';
+// import TreeViewAnt from './components/TreeViewAnt.vue';
+import Header from './components/Header.vue';
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-    <div class="wrapper">
-      <TreeViewAnt />
-    </div>
-  </header>
-
-  <main>
-    <TableViewAnt />
-  </main>
+  <!-- <header>
+  </header> -->
+  <div style="width: 100%">
+    <Header />
+  </div>
+  <!-- <main> -->
+    <!-- <Header></Header> -->
+    <!-- <TableViewAnt /> -->
+  <!-- </main> -->
 </template>
 
 <style scoped>
-header {
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #000000;
+  margin-top: 60px;
+  max-width: 100%;
+  min-width: 100%;
+}
+
+/* header {
   line-height: 1.5;
 }
 
@@ -44,5 +55,5 @@ header {
     place-items: flex-start;
     flex-wrap: wrap;
   }
-}
+} */
 </style>
