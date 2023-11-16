@@ -366,13 +366,9 @@ export class AVProbeEditorProvider implements vscode.CustomReadonlyEditorProvide
 				<script type="module" crossorigin src="${dependencyList[1]}"></script>
 				<!-- <link rel="modulepreload" href="${dependencyList[2]}"> -->
 				<link rel="stylesheet" href="${dependencyList[0]}" />
-
 			</head>
-			<!-- 必须覆盖掉 body 的 display，覆盖之前是 flex，页面会错乱掉 -->
-			<body style="display: block;">
-			<div>
-				<hr/>
-				<div id="application"></div>
+			<body>
+				<div id="app"></div>
 			</body>
 		</html>
 
