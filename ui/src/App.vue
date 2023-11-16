@@ -9,6 +9,8 @@ import Header from "./components/Header.vue";
 <script>
 export default {
   created() {
+  },
+  data() {
   }
 }
 </script>

@@ -5,15 +5,34 @@ import PacketsTableView from "./PacketsTableView.vue";
 </script>
 <script>
 export default {
-  name: "Header",
+	name: "Header",
+	props: {
+		message: {
+			type: String,
+			required: false,
+			default: 'Hello, world!'
+		}
+	},
   // life cycle method
   created() {
 		console.log("Header.vue created");
+		this.options = ref([{
+			label: 'All Streams',
+			value: 'All Streams'
+		}, {
+			label: 'Audio',
+			value: 'Audio'
+		}, {
+			label: 'Video',
+			value: 'Video'
+		}])
+		this.selectedOption = ref(this.options[0].value)
+
     window.addEventListener("message", async (e) => {
       const { type, body, requestId } = e.data;
 			console.log("Header.vue Receive ", type, " message from vscode extension, body: ", body)
       switch (type) {
-        case "init": {
+				case "init": {
 					console.log("Header.vue hello world from vscode extension, body: ", body);
 					// how to update ref(*) type value?
 					// this.filePath.value = body["filePath"] ?? "";
@@ -21,8 +40,32 @@ export default {
 					this.fileInfo['filePath'] = body["filePath"] ?? "";
 					this.fileInfo['fileSize'] = Number(body["fileSize"]) ?? 0;
 					console.log("Header.vue filePath: ", this.filePath, ", fileSize: ", this.fileSize);
+					return;
+				};
+				case "media_info": {
+          this.mediaInfo = JSON.parse(body);
+          console.log(
+            "Header.vue Receive 'media_info' message from vscode extension, body: ",
+            body
+          );
+          console.log(
+            "Header.vue Receive 'media_info' message from vscode extension, mediaInfo: ",
+            this.mediaInfo
+          );
+          // debugger;
+          if (this.mediaInfo && this.mediaInfo["format"] !== undefined) {
+            this.formatInfo = Object.fromEntries(
+              Object.entries(this.mediaInfo["format"]).filter(([key, value]) => {
+                console.log("key:", key, ":", value);
+                return key !== "filename";
+              })
+            );
+          }
+          if (this.mediaInfo && this.mediaInfo["streams"] !== undefined) {
+						this.streamsInfo = this.mediaInfo["streams"];
+          }
           return;
-        }
+        };
       }
 		});
 
@@ -30,24 +73,18 @@ export default {
   },
   data() {
     return {
-      filePath: ref(""),
-			fileSize: ref("0 MB"),
 			fileInfo: ref({}),
       isInfoVisible: ref(false),
       size: ref("default"),
       gapSize: ref("small"),
 			customGapSize: ref(0),
-			options: ref([{
-				label: 'All',
-				value: 'All'
-			},{
-				label: 'Audio',
-				value: 'Audio'
-			},{
-				label: 'Video',
-				value: 'Video'
-				}]),
-			selectedOption: ref('All'),
+			options: ref([]),
+			selectedOption: ref(''),
+			// ----------------
+			mediaInfo: ref({}),
+      formatInfo: ref({}),
+			streamsInfo: ref([]),
+			// ----------------
     };
   },
   methods: {
@@ -102,7 +139,7 @@ export default {
   </a-row> -->
 
   <a-divider />
-  <BasicMediaInfo />
+  <BasicMediaInfo :formatInfo="formatInfo" :streamsInfo="streamsInfo" />
   <PacketsTableView />
 </template>
 

@@ -272,13 +272,21 @@ export class AVProbeEditorProvider implements vscode.CustomReadonlyEditorProvide
 
 		webviewPanel.webview.onDidReceiveMessage(e => this.onMessage(document, e, webviewPanel));
 
+		// get file size of the media file
+		const filePath = document.uri.path;
+		const stat = await vscode.workspace.fs.stat(document.uri);
+		const fileSize = stat.size;
+		console.log("fileSize: ", fileSize);
 		// Wait for the webview to be properly ready before we init
 		webviewPanel.webview.onDidReceiveMessage(e => {
+			console.log("vscode extension Received message: ", e.type, ", body: ", e);
 			if (e.type === 'ready') {
 				if (document.uri.scheme === 'untitled') {
 					this.postMessage(webviewPanel, 'init', {
 						untitled: true,
 						editable: true,
+						filePath: "",
+						fileSize: 0,
 					});
 				} else {
 					const editable = vscode.workspace.fs.isWritableFileSystem(document.uri.scheme);
@@ -286,6 +294,8 @@ export class AVProbeEditorProvider implements vscode.CustomReadonlyEditorProvide
 					this.postMessage(webviewPanel, 'init', {
 						value: document.documentData,
 						editable,
+						filePath,
+						fileSize,
 					});
 				}
 			}
@@ -331,6 +341,11 @@ export class AVProbeEditorProvider implements vscode.CustomReadonlyEditorProvide
 		// Use a nonce to whitelist which scripts can be run
 		const nonce = getNonce();
 
+		// <link href="${styleResetUri}" rel="stylesheet" />
+		// <link href="${styleVSCodeUri}" rel="stylesheet" />
+		// <link href="${styleTableUri}" rel="stylesheet" />
+		// <script nonce="${nonce}" src="${scriptJsonViewUri}"></script>
+
 		return /* html */`
 			<!DOCTYPE html>
 			<html lang="en">
@@ -344,11 +359,6 @@ export class AVProbeEditorProvider implements vscode.CustomReadonlyEditorProvide
 				<!--<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} blob:; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
 				-->
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
-				<!--
-				<link href="${styleResetUri}" rel="stylesheet" />
-				<link href="${styleVSCodeUri}" rel="stylesheet" />
-				<link href="${styleTableUri}" rel="stylesheet" />
-				<script nonce="${nonce}" src="${scriptJsonViewUri}"></script>-->
 				<title>AVProbe</title>
 				<script>
 					const vscode = acquireVsCodeApi();
@@ -358,7 +368,7 @@ export class AVProbeEditorProvider implements vscode.CustomReadonlyEditorProvide
 				<link rel="stylesheet" href="${dependencyList[0]}">
 			</head>
 			<body>
-				<div id="app"></div>
+				<div id="app" style="width=100%;" ></div>
 			</body>
 			</html>`;
 	}
