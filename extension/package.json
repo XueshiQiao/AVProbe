@@ -78,6 +78,12 @@
 					},
 					{
 						"filenamePattern": "*.h265"
+					},
+					{
+						"filenamePattern": "*.webp"
+					},
+					{
+						"filenamePattern": "*.webm"
 					}
 				]
 			}
