@@ -24,6 +24,10 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+    - run: cd ui
+    - run: npm install
+    - run: cd ..
+    - run: cd extension
     - run: npm install
     - run: npm run build --if-present
     - name: Publish
