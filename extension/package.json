@@ -19,7 +19,11 @@
 		"ffprobe",
 		"ffmpeg",
 		"audio",
-		"video"
+		"video",
+		"mp4",
+		"mov",
+		"h264",
+		"h265"
 	],
 	"categories": [
 		"Other"
@@ -68,6 +72,12 @@
 					},
 					{
 						"filenamePattern": "*.mp3"
+					},
+					{
+						"filenamePattern": "*.h264"
+					},
+					{
+						"filenamePattern": "*.h265"
 					}
 				]
 			}
