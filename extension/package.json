@@ -2,7 +2,7 @@
 	"name": "avprobe",
 	"displayName": "Audio/Video Probe",
 	"description": "Probe and show information of audio/video files",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"publisher": "XueshiQiao",
 	"private": true,
 	"license": "MIT",
@@ -75,7 +75,7 @@
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
-		"compile": "cd extension; tsc -p ./",
+		"compile": "tsc -p ./",
 		"lint": "eslint \"src/**/*.ts\"",
 		"watch": "tsc -w -p ./"
 	},
