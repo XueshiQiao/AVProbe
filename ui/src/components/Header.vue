@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import BasicMediaInfo from "./BasicMediaInfo.vue";
 import PacketsTableView from "./PacketsTableView.vue";
+import { TableOutlined, FilterOutlined } from '@ant-design/icons-vue';
 </script>
 <script>
 export default {
@@ -13,14 +14,8 @@ export default {
 		console.log("Header.vue created");
 		this.options = ref([{
 			label: 'All Streams',
-			value: 'all'
-		}, {
-			label: 'Audio',
-			value: 'audio'
-		}, {
-			label: 'Video',
-			value: 'video'
-		}])
+			value: '-1'
+		}]);
 		this.selectedOption = ref(this.options[0].value)
 
     window.addEventListener("message", async (e) => {
@@ -35,6 +30,8 @@ export default {
 					this.fileInfo['filePath'] = body["filePath"] ?? "";
 					this.fileInfo['fileSize'] = Number(body["fileSize"]) ?? 0;
 					console.log("Header.vue filePath: ", this.filePath, ", fileSize: ", this.fileSize);
+
+					this.showInformation();
 					return;
 				};
 				case "media_info": {
@@ -58,6 +55,16 @@ export default {
           }
           if (this.mediaInfo && this.mediaInfo["streams"] !== undefined) {
 						this.streamsInfo = this.mediaInfo["streams"];
+						this.streamsInfo.forEach((stream, index) => {
+							stream["key"] = index.toString();
+							debugger;
+							if (this.options.findIndex((option) => option.value === stream["index"]) === -1) {
+								this.options.push({
+									label: stream["codec_type"] + "-" + stream["index"],
+									value: stream["index"]
+								});
+							}
+						});
           }
           return;
 				};
@@ -85,7 +92,7 @@ export default {
       gapSize: ref("small"),
 			customGapSize: ref(0),
 			options: ref([]),
-			selectedOption: ref(''),
+			selectedOption: ref(-1),
 			// ----------------
 			mediaInfo: ref({}),
       formatInfo: ref({}),
@@ -96,12 +103,11 @@ export default {
   },
   methods: {
     showInformation() {
-      this.isInfoVisible = true;
       vscode.postMessage({ type: "probe" });
     },
     showPackets() {
 			console.log("showPackets: ", this.selectedOption);
-			vscode.postMessage({ type: 'show_packets', streamType: this.selectedOption });
+			vscode.postMessage({ type: 'show_packets', streamIndex: this.selectedOption });
     },
   },
 };
@@ -111,7 +117,7 @@ export default {
 	<a-flex gap="middle" vertical>
 		<a-row>
 			<a-col :span="24">
-				<a-card title="Basic Info">
+				<a-card title="Media file">
 					<a-descriptions title="" bordered size="small" :column="{ xxl: 1, xl: 1, lg: 1, md: 1, sm: 1, xs: 1 }">
 						<a-descriptions-item label="Path">{{ fileInfo['filePath'] }}</a-descriptions-item>
 						<a-descriptions-item label="Size"
@@ -124,13 +130,18 @@ export default {
 
 		<a-row>
 			<a-space size="middle">
-				<a-button type="primary" @click="showInformation">Show Information</a-button>
+				<!-- <a-button type="primary" @click="showInformation">Show Information</a-button> -->
 				<a-select :options="options" v-model:value="selectedOption">
 					<a-select-option value="all" select>All</a-select-option>
 					<a-select-option value="audio">Audio</a-select-option>
 					<a-select-option value="video">Video</a-select-option>
 				</a-select>
-				<a-button @click="showPackets">Show Packets</a-button>
+				<a-button @click="showPackets">
+					<template #icon>
+						<TableOutlined />
+					</template>
+					Show packets
+				</a-button>
 			</a-space>
 		</a-row>
 

@@ -46,7 +46,7 @@ class FFProbe {
 		} else if (Array.isArray(params)) {
 			cmd += ` ${params.join(' ')}`;
 		}
-		cmd += ` ${path}`;
+		cmd += ` "${path}"`;
 		console.log("cmd: ", cmd);
 
 		const options = { maxBuffer: 1024 * 1024 * 100 }; // Increasing maxBuffer to 100MB
@@ -415,13 +415,12 @@ export class AVProbeEditorProvider implements vscode.CustomReadonlyEditorProvide
 				}
 			case 'show_packets':
 				{
-					// [all, audio, video]
-					const streamType = message.streamType;// == 0 ? "all" : (message.streamType == 1 ? "audio" : "video");
+					const streamIndex = message.streamIndex;
 					let args = "-v quiet -hide_banner -print_format json -show_packets";
-					if (streamType === "audio") {
-						args += " -select_streams a";
-					} else if (streamType === "video") {
-						args += " -select_streams v";
+					if (streamIndex !== undefined && Number(streamIndex) >= 0) {
+						args += " -select_streams " + streamIndex;
+					} else {
+						// nop, select all streams for default
 					}
 					FFProbe.probeMediaInfoWithCustomArgs(document.uri.path, args).then((info) => {
 						console.log("probeMediaInfo: ", info);

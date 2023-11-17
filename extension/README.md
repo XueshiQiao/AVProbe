@@ -25,5 +25,16 @@ Install the ffprobe / ffmpeg command-line tool. AVProbe inspects media informati
 ![Alt text](https://images.xueshi.io/screenshots/set_custom_ffprobe_path.png)
 
 ### 2. Open media files with 'AVProbe'
-> Simply right-click on the media file, then select ‘Audio/Video Probe’ to open it
+Simply right-click on the media file, then select ‘Audio/Video Probe’ to open it
 ![Alt text](https://images.xueshi.io/screenshots/open_with_avprobe.png)
+
+
+## Changelogs
+
+v0.1.2
+1. Presets basic info automatically without clicking any button
+2. Fix problem with media path contains empty characters
+
+v0.1.0
+1. Upgrade to new UI (based on `vue 3` and `Ant Design vue`)
+2. Add screenshots
