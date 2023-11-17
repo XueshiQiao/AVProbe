@@ -1,8 +1,6 @@
 <script setup>
 import { ref } from "vue";
 import BasicMediaInfo from "./BasicMediaInfo.vue";
-import PacketsTableView from "./PacketsTableView.vue";
-import { TableOutlined, FilterOutlined } from '@ant-design/icons-vue';
 </script>
 <script>
 export default {
@@ -16,7 +14,6 @@ export default {
 			label: 'All Streams',
 			value: '-1'
 		}]);
-		this.selectedOption = ref(this.options[0].value)
 
     window.addEventListener("message", async (e) => {
       const { type, body, requestId } = e.data;
@@ -57,7 +54,6 @@ export default {
 						this.streamsInfo = this.mediaInfo["streams"];
 						this.streamsInfo.forEach((stream, index) => {
 							stream["key"] = index.toString();
-							debugger;
 							if (this.options.findIndex((option) => option.value === stream["index"]) === -1) {
 								this.options.push({
 									label: stream["codec_type"] + "-" + stream["index"],
@@ -92,7 +88,6 @@ export default {
       gapSize: ref("small"),
 			customGapSize: ref(0),
 			options: ref([]),
-			selectedOption: ref(-1),
 			// ----------------
 			mediaInfo: ref({}),
       formatInfo: ref({}),
@@ -104,10 +99,6 @@ export default {
   methods: {
     showInformation() {
       vscode.postMessage({ type: "probe" });
-    },
-    showPackets() {
-			console.log("showPackets: ", this.selectedOption);
-			vscode.postMessage({ type: 'show_packets', streamIndex: this.selectedOption });
     },
   },
 };
@@ -130,27 +121,10 @@ export default {
 			</a-col>
 		</a-row>
 
-		<a-row>
-			<a-space size="middle">
-				<!-- <a-button type="primary" @click="showInformation">Show Information</a-button> -->
-				<a-select :options="options" v-model:value="selectedOption">
-					<a-select-option value="all" select>All</a-select-option>
-					<a-select-option value="audio">Audio</a-select-option>
-					<a-select-option value="video">Video</a-select-option>
-				</a-select>
-				<a-button @click="showPackets">
-					<template #icon>
-						<TableOutlined />
-					</template>
-					Show packets
-				</a-button>
-			</a-space>
-		</a-row>
-
-		<a-flex gap="small">
-			<BasicMediaInfo :formatInfo="formatInfo" :streamsInfo="streamsInfo" :packetsInfo="packetsInfo" />
-			<!-- <PacketsTableView :packetsInfo="packetsInfo" /> -->
-		</a-flex>
+		<BasicMediaInfo :formatInfo="formatInfo"
+				:streamsInfo="streamsInfo"
+				:packetsInfo="packetsInfo"
+				:options="options" />
 	</a-flex>
 </template>
 

@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import PacketsTableView from "./PacketsTableView.vue";
+import { TableOutlined } from '@ant-design/icons-vue';
 </script>
 <script>
 export default {
@@ -19,7 +20,12 @@ export default {
       type: Array,
       required: true,
       default: [],
-    }
+    },
+    options: {
+      type: Array,
+      required: true,
+      default: [],
+    },
   },
   created() {
     console.log("BasicMediaInfo.vue created");
@@ -80,9 +86,15 @@ export default {
           key: "flags",
         },
       ]),
+			selectedOption: ref("-1"),
     };
   },
-  methods: {},
+  methods: {
+    showPackets() {
+			console.log("showPackets: ", this.selectedOption);
+			vscode.postMessage({ type: 'show_packets', streamIndex: this.selectedOption });
+    },
+  },
 };
 </script>
 
@@ -108,11 +120,15 @@ export default {
 
     <a-tab-pane key="packets_info" :tab="'Packets Info (total: ' + packetsInfo.length + ')'">
       <PacketsTableView :packetsInfo="packetsInfo" />
-      <!-- <a-table :columns="columns" :dataSource="packetsInfo" bordered>
-        <template #bodyCell="{ column, text, record }">
-          {{ text }}
-        </template>
-      </a-table> -->
     </a-tab-pane>
+    <template #rightExtra>
+      <a-select :options="options" v-model:value="selectedOption"></a-select>
+      <a-button @click="showPackets">
+        <template #icon>
+          <TableOutlined />
+        </template>
+        Show packets
+      </a-button>
+    </template>
   </a-tabs>
 </template>
