@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from "vue";
+import PacketsTableView from "./PacketsTableView.vue";
 </script>
 <script>
 export default {
@@ -14,6 +15,11 @@ export default {
       required: true,
       default: [],
     },
+    packetsInfo: {
+      type: Array,
+      required: true,
+      default: [],
+    }
   },
   created() {
     console.log("BasicMediaInfo.vue created");
@@ -22,6 +28,58 @@ export default {
     return {
       descriptionColumn: { xxl: 2, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 },
       activeKey: ref("0"),
+      columns: ref([
+        {
+          title: "codec_type",
+          dataIndex: "codec_type",
+          key: "codec_type",
+        },
+        {
+          title: "pts",
+          dataIndex: "pts",
+          key: "pts",
+        },
+        {
+          title: "pts_time",
+          dataIndex: "pts_time",
+          key: "pts_time",
+        },
+        {
+          title: "dts",
+          dataIndex: "dts",
+          key: "dts",
+        },
+        {
+          title: "dts_time",
+          dataIndex: "dts_time",
+          key: "dts_time",
+        },
+        {
+          title: "duration",
+          dataIndex: "duration",
+          key: "duration",
+        },
+        {
+          title: "duration_time",
+          dataIndex: "duration_time",
+          key: "duration_time",
+        },
+        {
+          title: "size",
+          dataIndex: "size",
+          key: "size",
+        },
+        {
+          title: "pos",
+          dataIndex: "pos",
+          key: "pos",
+        },
+        {
+          title: "flags",
+          dataIndex: "flags",
+          key: "flags",
+        },
+      ]),
     };
   },
   methods: {},
@@ -47,5 +105,14 @@ export default {
         </a-descriptions>
       </a-tab-pane>
     </template>
+
+    <a-tab-pane key="packets_info" :tab="'Packets Info (total: ' + packetsInfo.length + ')'">
+      <PacketsTableView :packetsInfo="packetsInfo" />
+      <!-- <a-table :columns="columns" :dataSource="packetsInfo" bordered>
+        <template #bodyCell="{ column, text, record }">
+          {{ text }}
+        </template>
+      </a-table> -->
+    </a-tab-pane>
   </a-tabs>
 </template>

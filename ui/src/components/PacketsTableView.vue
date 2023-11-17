@@ -1,11 +1,9 @@
 <template>
-  <a-card :title="'Packets Info (total: ' + packetsInfo.length + ')'" v-if="packetsInfo.length > 0">
-    <a-table :columns="columns" :dataSource="packetsInfo" bordered>
-      <template #bodyCell="{ column, text, record }">
-        {{ text }}
-      </template>
-    </a-table>
-  </a-card>
+  <a-table :columns="columns" :dataSource="packetsInfo" bordered>
+    <template #bodyCell="{ column, text, record }">
+      {{ text }}
+    </template>
+  </a-table>
 </template>
 <script setup></script>
 

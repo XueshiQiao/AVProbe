@@ -119,10 +119,12 @@ export default {
 			<a-col :span="24">
 				<a-card title="Media file">
 					<a-descriptions title="" bordered size="small" :column="{ xxl: 1, xl: 1, lg: 1, md: 1, sm: 1, xs: 1 }">
-						<a-descriptions-item label="Path">{{ fileInfo['filePath'] }}</a-descriptions-item>
-						<a-descriptions-item label="Size"
-							>{{ (fileInfo['fileSize'] / 1000.0 / 1000.0).toFixed(2) }} MB ({{ fileInfo['fileSize'] }} bytes)</a-descriptions-item
-						>
+						<a-descriptions-item label="Path">
+							{{ fileInfo['filePath'] }}
+						</a-descriptions-item>
+						<a-descriptions-item label="Size">
+							{{ (fileInfo['fileSize'] / 1000.0 / 1000.0).toFixed(2) }} MB ({{ fileInfo['fileSize'] }} bytes)
+						</a-descriptions-item>
 					</a-descriptions>
 				</a-card>
 			</a-col>
@@ -146,8 +148,8 @@ export default {
 		</a-row>
 
 		<a-flex gap="small">
-			<BasicMediaInfo :formatInfo="formatInfo" :streamsInfo="streamsInfo"  />
-			<PacketsTableView :packetsInfo="packetsInfo" />
+			<BasicMediaInfo :formatInfo="formatInfo" :streamsInfo="streamsInfo" :packetsInfo="packetsInfo" />
+			<!-- <PacketsTableView :packetsInfo="packetsInfo" /> -->
 		</a-flex>
 	</a-flex>
 </template>
