@@ -27,7 +27,7 @@ jobs:
     - run: cd extension; npm install
     - run: cd extension; npm run build --if-present
     - name: Publish
-      if: success() && startsWith(github.ref, 'refs/tags/')
+      if: startsWith(github.ref, 'refs/tags/')
       run: cd extension; npm run deploy
       env:
         VSCE_PAT: ${{ secrets.VSCE_PAT }}
