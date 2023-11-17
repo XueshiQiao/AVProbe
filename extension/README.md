@@ -3,8 +3,8 @@ Display the information of Audio/Video files using the built-in ffmpeg/ffprobe.
 
 ## Screenshots
 
-![](screenshots/screenshots_01.png)
-![](screenshots/screenshots_02.png)
+![](/screenshots/screenshots_01.png)
+![](/screenshots/screenshots_02.png)
 
 ## Features
 * [x] Support mp4/mkv/mov and others
@@ -22,8 +22,8 @@ Install the ffprobe / ffmpeg command-line tool. AVProbe inspects media informati
 
 ### 1. Config `ffprobe` path
 
-![Alt text](screenshots/set_custom_ffprobe_path.png)
+![Alt text](/screenshots/set_custom_ffprobe_path.png)
 
 ### 2. Open media files with 'AVProbe'
 > Simply right-click on the media file, then select ‘Audio/Video Probe’ to open it
-![Alt text](screenshots/open_with_avprobe.png)
+![Alt text](/screenshots/open_with_avprobe.png)
