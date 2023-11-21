@@ -19,80 +19,22 @@ export default {
     return {
       columns: ref([
         {
-          title: "codec_name",
+          title: "Codec Name",
           dataIndex: "codec_name",
           key: "codec_name",
         },{
-          title: "description",
+          title: "Description",
           dataIndex: "description",
           key: "description",
         },{
-          title: "flags",
+          title: "Flags",
           dataIndex: "flags",
           key: "flags",
         },
-      ]),
-      codec_info: ref([
         {
-          codec_type: 'Ant Design Title 1',
-          description: 'Ant Design Description 1',
-          flags: 'Ant Design Description 1',
-        },{
-          codec_type: 'Ant Design Title 1',
-          description: 'Ant Design Description 1',
-          flags: 'Ant Design Description 1',
-        },{
-          codec_type: 'Ant Design Title 1',
-          description: 'Ant Design Description 1',
-          flags: 'Ant Design Description 1',
-        },{
-          codec_type: 'Ant Design Title 1',
-          description: 'Ant Design Description 1',
-          flags: 'Ant Design Description 1',
-        },{
-          codec_type: 'Ant Design Title 1',
-          description: 'Ant Design Description 1',
-          flags: 'Ant Design Description 1',
-        },{
-          codec_type: 'Ant Design Title 1',
-          description: 'Ant Design Description 1',
-          flags: 'Ant Design Description 1',
-        },{
-          codec_type: 'Ant Design Title 1',
-          description: 'Ant Design Description 1',
-          flags: 'Ant Design Description 1',
-        },{
-          codec_type: 'Ant Design Title 1',
-          description: 'Ant Design Description 1',
-          flags: 'Ant Design Description 1',
-        },{
-          codec_type: 'Ant Design Title 1',
-          description: 'Ant Design Description 1',
-          flags: 'Ant Design Description 1',
-        },{
-          codec_type: 'Ant Design Title 1',
-          description: 'Ant Design Description 1',
-          flags: 'Ant Design Description 1',
-        },{
-          codec_type: 'Ant Design Title 1',
-          description: 'Ant Design Description 1',
-          flags: 'Ant Design Description 1',
-        },{
-          codec_type: 'Ant Design Title 1',
-          description: 'Ant Design Description 1',
-          flags: 'Ant Design Description 1',
-        },{
-          codec_type: 'Ant Design Title 1',
-          description: 'Ant Design Description 1',
-          flags: 'Ant Design Description 1',
-        },{
-          codec_type: 'Ant Design Title 1',
-          description: 'Ant Design Description 1',
-          flags: 'Ant Design Description 1',
-        },{
-          codec_type: 'Ant Design Title 1',
-          description: 'Ant Design Description 1',
-          flags: 'Ant Design Description 1',
+          title: "Flags Detail",
+          dataIndex: "flags_detail",
+          key: "flags_detail",
         },
       ]),
     }

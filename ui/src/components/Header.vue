@@ -68,12 +68,13 @@ function parseCodecs(input) {
     console.log(`Key: ${key}, Value: ${value}`);
   });
 
-  const completed = codecs_array.map((codec) => {
+	const completed = codecs_array.map((codec) => {
+		const flags_detail_array = parseFlags(codec[0], flags_map)
     return {
       codec_name: codec[1],
       description: codec[2],
       flags: codec[0],
-      flags_array: parseFlags(codec[0], flags_map),
+      flags_detail: flags_detail_array['flags'].join(", \n"),
     };
   });
 
@@ -118,6 +119,7 @@ export default {
 
           this.showInformation();
           this.showDecoders();
+					this.showEncoders();
           return;
         }
         case "media_info": {
@@ -174,15 +176,24 @@ export default {
           );
           return;
         }
-        case "show_decoders": {
-          console.log("receive body:", body);
-          this.decoders = parseCodecs(body);
-          console.log(
-            "Header.vue Receive 'show_decoders' message from vscode extension, decoders: ",
-            this.decoders
-          );
-          return;
-        }
+				case "show_decoders": {
+					console.log("receive body:", body);
+					this.decoders = parseCodecs(body);
+					console.log(
+						"Header.vue Receive 'show_decoders' message from vscode extension, decoders: ",
+						this.decoders
+					);
+					return;
+				};
+				case "show_encoders": {
+					console.log("receive body:", body);
+					this.encoders = parseCodecs(body);
+					console.log(
+						"Header.vue Receive 'show_decoders' message from vscode extension, decoders: ",
+						this.encoders
+					);
+					return;
+				};
       }
     });
 
@@ -201,8 +212,10 @@ export default {
       formatInfo: ref({}),
       streamsInfo: ref([]),
       packetsInfo: ref([]),
-      open: ref(false),
+      openEncoders: ref(false),
+      openDecoders: ref(false),
       decoders: ref([]),
+      encoders: ref([]),
       // ----------------
     };
   },
@@ -213,17 +226,29 @@ export default {
     showDecoders() {
       vscode.postMessage({ type: "show_decoders" });
     },
+		showEncoders() {
+      vscode.postMessage({ type: "show_encoders" });
+    },
     handleClick() {
       console.log("click");
     },
-    showModal() {
+    showDecodersModal() {
       console.log("showModal open:", this.open);
-      this.open = true;
+      this.openDecoders = true;
     },
-    dismissModal(e) {
+		showEncodersModal() {
+      console.log("showModal open:", this.open);
+      this.openEncoders = true;
+    },
+		dismissDecodersModal(e) {
       console.log(e);
-      this.open = false;
-    },
+      this.openDecoders = false;
+		},
+    dismissEncodersModal(e) {
+      console.log(e);
+      this.openEncoders = false;
+		},
+
   },
 };
 </script>
@@ -260,16 +285,39 @@ export default {
       :options="options"
     />
   </a-flex>
-  <a-float-button @click="showModal" />
+
+  <a-float-button type="primary"
+    :style="{
+      right: '24px',
+    }"
+		@click="showDecodersModal" />
+
+  <a-float-button type="default"
+    :style="{
+      right: '94px',
+    }"
+		@click="showEncodersModal" />
+
   <a-modal
-    v-model:open="open"
-    title="Codecs"
+    v-model:open="openDecoders"
+    title="Decoders"
     width="70%"
     wrap-class-name="full-modal"
-    @ok="dismissModal"
+    @ok="dismissDecodersModal"
   >
     <p>Codecs</p>
     <Codecs :decoders="decoders" />
+  </a-modal>
+
+	<a-modal
+    v-model:open="openEncoders"
+    title="Encoders"
+    width="70%"
+    wrap-class-name="full-modal"
+    @ok="dismissEncodersModal"
+  >
+    <p>Codecs</p>
+    <Codecs :decoders="encoders" />
   </a-modal>
   <!-- <Codecs :decoders="decoders" /> -->
 </template>
