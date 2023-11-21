@@ -350,12 +350,12 @@ h3 {
 .full-modal {
   .ant-modal {
     max-width: 70%;
-    height: 80%;
+    min-height: 80%;
   }
   .ant-modal-content {
     display: flex;
     flex-direction: column;
-    height: 80%;
+    min-height: 80%;
   }
   .ant-modal-body {
     flex: 1;
