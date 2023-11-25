@@ -8,9 +8,9 @@ Display the information of Audio/Video files using the built-in ffmpeg/ffprobe.
 * [x] Enhanced User Interface (implemented using Vue3 + AntDesign for Vue)
 * [x] Responsive Webview
 * [x] Automatically switch between Light/Dark theme based on system settings
-* [ ] Support show decoder/encoder information supported by FFmpeg local/remote
+* [x] Support show decoder/encoder information supported by FFmpeg local/remote
   * [x] Show decoders/encoders list
-  * [ ] Support filtering by conditions like codec type and name
+  * [x] Support filtering by conditions like codec type and name
 * [ ] Preview specified frame
 
 ## Screenshots
