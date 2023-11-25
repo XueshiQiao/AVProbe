@@ -31,6 +31,13 @@
 	"activationEvents": [],
 	"main": "./out/extension.js",
 	"contributes": {
+		"commands": [
+			{
+				"command": "avprobe.decoders",
+				"title": "Show all decoders supported by ffmpeg",
+				"category": "AVProbe"
+			}
+		],
 		"configuration": {
 			"title": "Custom ffmpeg/ffprobe path",
 			"properties": {
