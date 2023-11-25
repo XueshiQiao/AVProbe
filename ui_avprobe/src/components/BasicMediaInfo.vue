@@ -2,6 +2,8 @@
 import { ref } from "vue";
 import PacketsTableView from "./PacketsTableView.vue";
 import { TableOutlined } from '@ant-design/icons-vue';
+import { theme } from 'ant-design-vue';
+
 </script>
 <script>
 export default {
@@ -86,7 +88,8 @@ export default {
           key: "flags",
         },
       ]),
-			selectedOption: ref("-1"),
+      selectedOption: ref("-1"),
+      theme: theme,
     };
   },
   methods: {

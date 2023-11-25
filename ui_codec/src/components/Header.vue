@@ -1,6 +1,9 @@
 <script setup>
 import { ref } from "vue";
 import Codecs from "./Codecs.vue";
+import { MailOutlined, KeyOutlined } from "@ant-design/icons-vue";
+import { theme } from 'ant-design-vue';
+
 </script>
 <script>
 function matchRegex(str, regex) {
@@ -91,6 +94,14 @@ export default {
       },
     ]);
 
+    // Config dark mode automatically
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+      const newColorScheme = event.matches ? "dark" : "light";
+      console.log("Header.vue system color scheme changed to ", newColorScheme);
+      this.isSystemDarkMode = event.matches;
+    });
+    this.isSystemDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
     window.addEventListener("message", async (e) => {
       const { type, body, requestId } = e.data;
       console.log("Header.vue Receive ", type, " message from vscode extension, body: ", body);
@@ -132,6 +143,8 @@ export default {
       encoders: ref([]),
       selectedKeys: ref(['encoders']),
       collapsed: ref(false),
+      theme: theme,
+      isSystemDarkMode: ref(false),
     };
   },
   methods: {
@@ -179,21 +192,28 @@ export default {
         }
       }
     }
-
   },
 };
 </script>
 
 <template>
+  <a-config-provider
+    :theme="{
+      // token: {
+      //   colorPrimary: '#00b96b',
+      // },
+      algorithm: isSystemDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
+    }"
+  >
   <a-layout style="min-height: 100vh">
     <a-layout-sider v-model:collapsed="collapsed" collapsible>
       <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline" @click="menuClicked">
         <a-menu-item key="encoders">
-          <PieChartOutlined />
+          <MailOutlined />
           <span>Encoders</span>
         </a-menu-item>
         <a-menu-item key="decoders">
-          <desktop-outlined />
+          <KeyOutlined />
           <span>Decoders</span>
         </a-menu-item>
         <!-- <a-sub-menu key="sub1">
@@ -224,13 +244,16 @@ export default {
       </a-menu>
     </a-layout-sider>
 
-		<a-layout-content style="margin: 0 16px">
-				<h2>Codecs</h2>
+    <a-layout-content style="margin: 0 16px">
+        <h2>Codecs</h2>
       <Codecs :codecs="decoders" name="decoders" v-if="selectedKeys[0] === 'decoders'"/>
       <Codecs :codecs="encoders" name="encoders" v-if="selectedKeys[0] === 'encoders'"/>
-		</a-layout-content>
+    </a-layout-content>
 
   </a-layout>
+
+  </a-config-provider>
+
 
   <a-float-button type="primary"
     :style="{
