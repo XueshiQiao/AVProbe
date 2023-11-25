@@ -93,12 +93,7 @@ export default {
 
     window.addEventListener("message", async (e) => {
       const { type, body, requestId } = e.data;
-      console.log(
-        "Header.vue Receive ",
-        type,
-        " message from vscode extension, body: ",
-        body
-      );
+      console.log("Header.vue Receive ", type, " message from vscode extension, body: ", body);
       switch (type) {
         case "init": {
           console.log("Header.vue hello world from vscode extension, body: ", body);
@@ -135,13 +130,21 @@ export default {
       openDecoders: ref(false),
       decoders: ref([]),
       encoders: ref([]),
+      selectedKeys: ref(['encoders']),
+      collapsed: ref(false),
     };
   },
   methods: {
     showDecoders() {
+      if (this.decoders.length > 0) {
+        return;
+      }
       vscode.postMessage({ type: "show_decoders" });
     },
-		showEncoders() {
+    showEncoders() {
+      if (this.encoders.length > 0) {
+        return;
+      }
       vscode.postMessage({ type: "show_encoders" });
     },
     handleClick() {
@@ -163,14 +166,72 @@ export default {
       console.log(e);
       this.openEncoders = false;
 		},
+    menuClicked(e) {
+      console.log("menuClicked:", e,"selectedKeys:", this.selectedKeys);
+      switch (e.key) {
+        case "encoders": {
+          this.showEncoders();
+          break;
+        }
+        case "decoders": {
+          this.showDecoders();
+          break;
+        }
+      }
+    }
 
   },
 };
 </script>
 
 <template>
-  <h2>Codecs</h2>
-  <Codecs :decoders="decoders" />
+  <a-layout style="min-height: 100vh">
+    <a-layout-sider v-model:collapsed="collapsed" collapsible>
+      <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline" @click="menuClicked">
+        <a-menu-item key="encoders">
+          <PieChartOutlined />
+          <span>Encoders</span>
+        </a-menu-item>
+        <a-menu-item key="decoders">
+          <desktop-outlined />
+          <span>Decoders</span>
+        </a-menu-item>
+        <!-- <a-sub-menu key="sub1">
+          <template #title>
+            <span>
+              <user-outlined />
+              <span>User</span>
+            </span>
+          </template>
+          <a-menu-item key="3">Tom</a-menu-item>
+          <a-menu-item key="4">Bill</a-menu-item>
+          <a-menu-item key="5">Alex</a-menu-item>
+        </a-sub-menu>
+        <a-sub-menu key="sub2">
+          <template #title>
+            <span>
+              <team-outlined />
+              <span>Team</span>
+            </span>
+          </template>
+          <a-menu-item key="6">Team 1</a-menu-item>
+          <a-menu-item key="8">Team 2</a-menu-item>
+        </a-sub-menu>
+        <a-menu-item key="9">
+          <file-outlined />
+          <span>File</span>
+        </a-menu-item> -->
+      </a-menu>
+    </a-layout-sider>
+
+		<a-layout-content style="margin: 0 16px">
+				<h2>Codecs</h2>
+      <Codecs :codecs="decoders" name="decoders" v-if="selectedKeys[0] === 'decoders'"/>
+      <Codecs :codecs="encoders" name="encoders" v-if="selectedKeys[0] === 'encoders'"/>
+		</a-layout-content>
+
+  </a-layout>
+
   <a-float-button type="primary"
     :style="{
       right: '24px',

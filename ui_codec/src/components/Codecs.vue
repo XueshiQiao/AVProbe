@@ -1,5 +1,6 @@
 <template>
-  <a-table :columns="columns" :dataSource="decoders" bordered pagination="false">
+  <h2>{{ name }}</h2>
+  <a-table :columns="columns" :dataSource="codecs" bordered :pagination="{ defaultPageSize: 15, pageSizeOptions: ['10', '15', '50', '100', '200'], showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items` }">
     <template #bodyCell="{ column, text, record }">
       {{ text }}
     </template>
@@ -10,9 +11,13 @@
 import {ref} from "vue";
 export default {
   props: {
-    decoders: {
+    codecs: {
       type: Array,
       default: () => [],
+    },
+    name: {
+      type: String,
+      default: "",
     },
   },
   data() {
@@ -22,20 +27,23 @@ export default {
           title: "Codec Name",
           dataIndex: "codec_name",
           key: "codec_name",
+          width: 150,
         },{
           title: "Description",
           dataIndex: "description",
           key: "description",
+          width: 300,
         },{
           title: "Flags",
           dataIndex: "flags",
           key: "flags",
+          width: 100,
         },
         {
           title: "Flags Detail",
           dataIndex: "flags_detail",
           key: "flags_detail",
-        },
+         },
       ]),
     }
   }

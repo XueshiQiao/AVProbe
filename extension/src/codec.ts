@@ -127,7 +127,7 @@ export class CatCodingPanel {
 				<title>AVProbe extension</title>
 				<style>
 					body {
-						padding: 20px;
+						padding: 8px;
 					}
 				</style>
 				<script>
