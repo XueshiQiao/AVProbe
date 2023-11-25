@@ -8,12 +8,12 @@ Display the information of Audio/Video files using the built-in ffmpeg/ffprobe.
 
 ## Features
 * [x] Support mp4/mkv/mov and others
-* [x] Displays basic information such as streams, formats, etc
+* [x] Display basic information such as streams, formats, etc
 * [x] Presents packets information in a table format
 * [x] Enhanced User Interface (implemented using Vue3 + AntDesign for Vue)
 * [x] Responsive Webview
+* [x] Automatically switch between Light/Dark theme based on system settings
 * [ ] Preview specified frame
-* [ ] Dark theme for Dark mode
 
 ## How to use?
 
