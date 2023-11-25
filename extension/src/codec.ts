@@ -260,7 +260,11 @@ export class CatCodingPanel {
   private onMessage(message: any,
 		webviewPanel: vscode.WebviewPanel) {
 		console.log('codec onMessage: ', message);
-    switch (message.type) {
+		switch (message.type) {
+			case 'ready': {
+				this.postMessage(webviewPanel, 'init', null);
+				return;
+			}
       case 'show_decoders': {
         FFProbe.execFFmpegCmd(['-decoders'])
             .then((info) => {

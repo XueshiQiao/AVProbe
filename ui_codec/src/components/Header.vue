@@ -13,8 +13,6 @@ function matchRegex(str, regex) {
   }
 }
 
-///////////
-
 function parseFlags(flags_str, flags_map) {
   const type_flag = flags_str[0];
   const type = flags_map.get(type_flag + ".".repeat(5));
@@ -92,9 +90,6 @@ export default {
         value: "-1",
       },
     ]);
-    this.showDecoders();
-    this.showEncoders();
-
 
     window.addEventListener("message", async (e) => {
       const { type, body, requestId } = e.data;
@@ -107,75 +102,8 @@ export default {
       switch (type) {
         case "init": {
           console.log("Header.vue hello world from vscode extension, body: ", body);
-          // how to update ref(*) type value?
-          // this.filePath.value = body["filePath"] ?? "";
-          // this.fileSize = Number(body["fileSize"]) ?? 0;
-          this.fileInfo["filePath"] = body["filePath"] ?? "";
-          this.fileInfo["fileSize"] = Number(body["fileSize"]) ?? 0;
-          console.log(
-            "Header.vue filePath: ",
-            this.filePath,
-            ", fileSize: ",
-            this.fileSize
-          );
-
-          this.showInformation();
           this.showDecoders();
 					this.showEncoders();
-          return;
-        }
-        case "media_info": {
-          this.mediaInfo = JSON.parse(body);
-          console.log(
-            "Header.vue Receive 'media_info' message from vscode extension, body: ",
-            body
-          );
-          console.log(
-            "Header.vue Receive 'media_info' message from vscode extension, mediaInfo: ",
-            this.mediaInfo
-          );
-          // debugger;
-          if (this.mediaInfo && this.mediaInfo["format"] !== undefined) {
-            this.formatInfo = Object.fromEntries(
-              Object.entries(this.mediaInfo["format"]).filter(([key, value]) => {
-                console.log("key:", key, ":", value);
-                return key !== "filename";
-              })
-            );
-          }
-          if (this.mediaInfo && this.mediaInfo["streams"] !== undefined) {
-            this.streamsInfo = this.mediaInfo["streams"];
-            this.streamsInfo.forEach((stream, index) => {
-              stream["key"] = index.toString();
-              if (
-                this.options.findIndex((option) => option.value === stream["index"]) ===
-                -1
-              ) {
-                this.options.push({
-                  label: stream["codec_type"] + "-" + stream["index"],
-                  value: stream["index"],
-                });
-              }
-            });
-          }
-          return;
-        }
-        case "packets": {
-          const packetsDict = JSON.parse(body);
-          if (
-            packetsDict &&
-            packetsDict["packets"] !== undefined &&
-            Array.isArray(packetsDict["packets"])
-          ) {
-            this.packetsInfo = packetsDict["packets"];
-            this.packetsInfo.forEach((packet, index) => {
-              packet["key"] = index.toString();
-            });
-          }
-          console.log(
-            "Header.vue Receive 'packets' message from vscode extension, packets: ",
-            this.packetsInfo
-          );
           return;
         }
 				case "show_decoders": {
@@ -203,28 +131,13 @@ export default {
   },
   data() {
     return {
-      fileInfo: ref({}),
-      isInfoVisible: ref(false),
-      size: ref("default"),
-      gapSize: ref("small"),
-      customGapSize: ref(0),
-      options: ref([]),
-      // ----------------
-      mediaInfo: ref({}),
-      formatInfo: ref({}),
-      streamsInfo: ref([]),
-      packetsInfo: ref([]),
       openEncoders: ref(false),
       openDecoders: ref(false),
       decoders: ref([]),
       encoders: ref([]),
-      // ----------------
     };
   },
   methods: {
-    showInformation() {
-      vscode.postMessage({ type: "probe" });
-    },
     showDecoders() {
       vscode.postMessage({ type: "show_decoders" });
     },

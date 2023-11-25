@@ -3,122 +3,12 @@ import * as path from 'path';
 import * as util from 'util';
 import * as vscode from 'vscode';
 
+import {FFProbe } from './avffmpeg';
 import {Disposable, disposeAll} from './dispose';
 import {getNonce} from './util';
 
-/* import * as ffmpeg from '@ffmpeg-installer/ffmpeg';
-import * as ffprobe from '@ffprobe-installer/ffprobe';
- */
-const fs = require('fs');
-
 interface AVFileDocumentDelegate {
   getFileData(): Promise<Uint8Array>;
-}
-
-class FFProbe {
-  public static async showDecodersInfo(): Promise<string> {
-    return await this.execFFmpegCmd('ffmpeg -decoders');
-  }
-
-  public static async execFFmpegCmd(params: any): Promise<string> {
-    const execPromise = util.promisify(child_process.exec);
-    let cmd = null;
-    const custom_ffmpeg_path: any =
-        vscode.workspace.getConfiguration().get('avprobe.ffmpegPath');
-    if (custom_ffmpeg_path) {
-      if (custom_ffmpeg_path.length > 0 && fs.existsSync(custom_ffmpeg_path)) {
-        cmd = custom_ffmpeg_path;
-        console.log('use custom ffmpeg path: ', custom_ffmpeg_path);
-      }
-    }
-
-    if (custom_ffmpeg_path == null || custom_ffmpeg_path.length == 0) {
-      vscode.window.showErrorMessage(
-          'Custom FFmpeg path may not exist: ' + custom_ffmpeg_path +
-          ', please make sure it is a valid path.');
-      return Promise.reject(
-          'Custom FFmpeg path may not exist: ' + custom_ffmpeg_path +
-          ', please configure it in setting with key \'avprobe.ffmpegPath\'');
-    }
-
-		cmd += " -hide_banner -v quiet ";
-
-    if (typeof params === 'string') {
-      cmd += ` ${params}`;
-    } else if (Array.isArray(params)) {
-      cmd += ` ${params.join(' ')}`;
-    }
-
-    console.log('cmd: ', cmd);
-
-    const options = {
-      maxBuffer: 1024 * 1024 * 100
-    };  // Increasing maxBuffer to 100MB
-    const {stdout, stderr} = await execPromise(cmd, options);
-    console.log('stdout size:', stdout.length);
-    if (stderr) {
-      return Promise.reject(stderr);
-    } else {
-      return Promise.resolve(stdout);
-    }
-  }
-
-  public static async probeMediaInfo(path: string): Promise<JSON> {
-    return await this.probeMediaInfoWithCustomArgs(
-        path,
-        '-hide_banner -v quiet -print_format json -show_format -show_streams');
-  }
-
-  /**
-   * Probe media files using ffprobe
-   * @param path media file path, e.g. /home/super_hero/1.mp4
-   * @param params string or array of string, e.g. ['-v', 'quiet',
-   *     '-print_format', 'json', '-show_format', '-show_streams']
-   * @returns
-   */
-  public static async probeMediaInfoWithCustomArgs(path: string, params: any):
-      Promise<JSON> {
-    const execPromise = util.promisify(child_process.exec);
-
-    let cmd = null;
-    const custom_ffprobe_path: any =
-        vscode.workspace.getConfiguration().get('avprobe.ffprobePath');
-    if (custom_ffprobe_path) {
-      if (custom_ffprobe_path.length > 0 &&
-          fs.existsSync(custom_ffprobe_path)) {
-        cmd = custom_ffprobe_path;
-        console.log('use custom ffprobe path: ', custom_ffprobe_path);
-      }
-    }
-
-    if (custom_ffprobe_path == null || custom_ffprobe_path.length == 0) {
-      vscode.window.showErrorMessage(
-          'Custom ffprobe path may not exist: ' + custom_ffprobe_path +
-          ', please make sure it is a valid path.');
-      return Promise.reject(
-          'Custom ffprobe path may not exist: ' + custom_ffprobe_path +
-          ', please configure it in setting with key \'avprobe.ffprobePath\'');
-    }
-
-    if (typeof params === 'string') {
-      cmd += ` ${params}`;
-    } else if (Array.isArray(params)) {
-      cmd += ` ${params.join(' ')}`;
-    }
-    cmd += ` "${path}"`;
-    console.log('cmd: ', cmd);
-
-    const options = {
-      maxBuffer: 1024 * 1024 * 100
-    };  // Increasing maxBuffer to 100MB
-    const {stdout, stderr} = await execPromise(cmd, options);
-    console.log('stdout size:', stdout.length);
-    if (stderr) {
-      return Promise.reject(stderr);
-    } else {
-      return Promise.resolve(JSON.parse(stdout));
-    }
-  }
 }
 
 /**
@@ -199,16 +89,6 @@ class AVFileDocument extends Disposable implements vscode.CustomDocument {
     this._onDidDispose.fire();
     super.dispose();
   }
-}
-
-class MessagePoster {
-  public constructor(private readonly webviewPanel: vscode.WebviewPanel) {
-    this._webViewPanel = webviewPanel;
-  }
-  public postMessage(message: any) {
-    this._webViewPanel.webview.postMessage(message);
-  }
-  private _webViewPanel: vscode.WebviewPanel;
 }
 
 /**
@@ -307,17 +187,7 @@ export class AVProbeEditorProvider implements
              */
         }));
 
-    listeners.push(document.onDidChangeContent(e => {
-      // Update all webviews when the document changes
-      for (const webviewPanel of this.webviews.get(document.uri)) {
-        this.postMessage(webviewPanel, 'update', {
-          content: e.content,
-        });
-      }
-    }));
-
     document.onDidDispose(() => disposeAll(listeners));
-
     return document;
   }
 
@@ -340,36 +210,6 @@ export class AVProbeEditorProvider implements
 
     webviewPanel.webview.onDidReceiveMessage(
         e => this.onMessage(document, e, webviewPanel));
-
-    // get file size of the media file
-    const filePath = document.uri.path;
-    const stat = await vscode.workspace.fs.stat(document.uri);
-    const fileSize = stat.size;
-    console.log('fileSize: ', fileSize);
-    // Wait for the webview to be properly ready before we init
-    webviewPanel.webview.onDidReceiveMessage(e => {
-      console.log('vscode extension Received message: ', e.type, ', body: ', e);
-      if (e.type === 'ready') {
-        if (document.uri.scheme === 'untitled') {
-          this.postMessage(webviewPanel, 'init', {
-            untitled: true,
-            editable: true,
-            filePath: '',
-            fileSize: 0,
-          });
-        } else {
-          const editable =
-              vscode.workspace.fs.isWritableFileSystem(document.uri.scheme);
-
-          this.postMessage(webviewPanel, 'init', {
-            value: document.documentData,
-            editable,
-            filePath,
-            fileSize,
-          });
-        }
-      }
-    });
   }
 
   /**
@@ -459,6 +299,33 @@ export class AVProbeEditorProvider implements
       document: AVFileDocument, message: any,
       webviewPanel: vscode.WebviewPanel) {
     switch (message.type) {
+      case 'ready': {
+        // get file size of the media file
+        const filePath = document.uri.path;
+        vscode.workspace.fs.stat(document.uri).then((stat) => {
+          const fileSize = stat.size;
+          console.log('fileSize: ', fileSize);
+          if (document.uri.scheme === 'untitled') {
+            this.postMessage(webviewPanel, 'init', {
+              untitled: true,
+              editable: true,
+              filePath: '',
+              fileSize: 0,
+            });
+          } else {
+            const editable =
+                vscode.workspace.fs.isWritableFileSystem(document.uri.scheme);
+
+            this.postMessage(webviewPanel, 'init', {
+              value: document.documentData,
+              editable,
+              filePath,
+              fileSize,
+            });
+          }
+        });
+        return;
+      }
       case 'probe': {
         FFProbe.probeMediaInfo(document.uri.path)
             .then((info) => {
@@ -489,45 +356,6 @@ export class AVProbeEditorProvider implements
               console.log('probeMediaInfo error: ', err);
             });
 
-        return;
-      }
-
-      case 'show_decoders': {
-        FFProbe.execFFmpegCmd(['-decoders'])
-            .then((info) => {
-              console.log('showDecodersInfo: ', info);
-              this.postMessage(webviewPanel, 'show_decoders', info);
-            })
-            .catch((err) => {
-              console.log('showDecodersInfo error: ', err);
-            });
-        return;
-      }
-      case 'show_encoders': {
-        FFProbe.execFFmpegCmd(['-encoders'])
-            .then((info) => {
-              console.log('showEncodersInfo: ', info);
-              this.postMessage(webviewPanel, 'show_encoders', info);
-            })
-            .catch((err) => {
-              console.log('showEncodersInfo error: ', err);
-            });
-        return;
-      }
-			case 'show_decoder_info': {
-				const decoderName = message.decoderName;
-				if (decoderName) {
-					FFProbe.execFFmpegCmd(['-help', 'decoder', decoderName])
-						.then((info) => {
-							console.log('showDecoderInfo: ', info);
-							this.postMessage(webviewPanel, 'show_decoder_info', info);
-						}
-					)
-						.catch((err) => {
-							console.log('showDecoderInfo error: ', err);
-						}
-					);
-				}
         return;
       }
     }
