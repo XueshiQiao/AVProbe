@@ -1,19 +1,28 @@
 # AVProbe (VSCode Extension)
 Display the information of Audio/Video files using the built-in ffmpeg/ffprobe.
 
-## Screenshots
-
-![](https://images.xueshi.io/screenshots/screenshots_01.png)
-![](https://images.xueshi.io/screenshots/screenshots_02.png)
-
 ## Features
-* [x] Support mp4/mkv/mov and others
-* [x] Displays basic information such as streams, formats, etc
+* [x] Support mp4/mkv/mov/webm and others
+* [x] Display basic information such as streams, formats, etc
 * [x] Presents packets information in a table format
 * [x] Enhanced User Interface (implemented using Vue3 + AntDesign for Vue)
 * [x] Responsive Webview
+* [x] Automatically switch between Light/Dark theme based on system settings
+* [ ] Support show decoder/encoder information supported by FFmpeg local/remote
+  * [x] Show decoders/encoders list
+  * [ ] Support filtering by conditions like codec type and name
 * [ ] Preview specified frame
-* [ ] Dark theme for Dark mode
+
+## Screenshots
+### Stream info
+note: (demo with light theme, support both light and dark)
+![](https://images.xueshi.io/screenshots/screenshots_01.png)
+
+### Packets info
+![](https://images.xueshi.io/screenshots/screenshots_02.png)
+
+### Decoders/Encoders info (demo with dark theme, support both light and dark)
+![](https://images.xueshi.io/screenshots/codecs_list.png)
 
 ## How to use?
 
@@ -28,6 +37,9 @@ Install the ffprobe / ffmpeg command-line tool. AVProbe inspects media informati
 Simply right-click on the media file, then select ‘Audio/Video Probe’ to open it
 ![Alt text](https://images.xueshi.io/screenshots/open_with_avprobe.png)
 
+### 3. Show decodes/encoders supported by FFmpeg on local/remote machine
+Open Command Palette, input "AVProbe" or "encoders"/"decoders" to access the command as follows
+![Alt text](https://images.xueshi.io/screenshots/codecs_command.png)
 
 ## Changelogs
 
