@@ -8,10 +8,10 @@
       <a-input-search v-model:value="searchText" @search="onSearch" placeholder="keywords" style="width: 200px">
       </a-input-search>
     </a-flex>
-    <a-table :columns="columns" :dataSource="codecs" bordered :pagination="{ defaultPageSize: 15, pageSizeOptions: ['10', '15', '50', '100', '200'], showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items` }">
+    <a-table :columns="columns" :dataSource="filteredCodecs" bordered :pagination="{ defaultPageSize: 15, pageSizeOptions: ['10', '15', '50', '100', '200'], showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items` }">
       <template #bodyCell="{ column, text, record }">
         {{ text }}
-      </TEMPLATE>
+      </template>
     </a-table>
   </a-flex>
 </template>
@@ -29,6 +29,29 @@ export default {
     name: {
       type: String,
       default: "",
+    },
+  },
+  created() {
+    console.log("Codecs.vue created, codecs: ", this.codecs.length);
+    this.filteredCodecs = ref(JSON.parse(JSON.stringify(this.codecs)));
+  },
+  watch: {
+    // on codecTypeOption changed, refilter codecs
+    searchText: {
+      handler(newVal, oldVal) {
+        console.log("Codecs.vue watch searchText changed, newVal: ", newVal, ", oldVal: ", oldVal);
+        this.refilterCodecs();
+      },
+      deep: true,
+    },
+
+    // on codecTypeOption changed, copy filteredCodecs
+    codecs: {
+      handler(newVal, oldVal) {
+        console.log("Codecs.vue watch codecs changed, newVal: ", newVal.length, ", oldVal: ", oldVal.length);
+        this.filteredCodecs = ref(JSON.parse(JSON.stringify(newVal)));
+      },
+      deep: true,
     },
   },
   data() {
@@ -56,6 +79,7 @@ export default {
           key: "flags_detail",
          },
       ]),
+      filteredCodecs: ref([]),
       codecTypeOptions: ref([
         { label: "ALL", value: "-"},
         { label: "Audio", value: "A" },
@@ -67,14 +91,29 @@ export default {
     }
   },
   methods: {
-    onCodecTypeOptionSelected(label, option) {
-      console.log('click label', label, ", option: ", option);
+    onCodecTypeOptionSelected(value, option) {
+      console.log('click value: ', value, ", option: ", option);
+      this.selectedCodecTypeOption = value;
+      this.refilterCodecs();
     },
     onSearch(value, event, other) {
       console.log('search: [', value, "], searchText: [", this.searchText, "]");
+      this.refilterCodecs();
     },
-    pressEnter(e) {
-      console.log('enter: ', e);
+    refilterCodecs() {
+      console.log("Codecs.vue refilterCodecs, selectedCodecTypeOption: ", this.selectedCodecTypeOption);
+      var copy = JSON.parse(JSON.stringify(this.codecs));
+      // debugger;
+      copy = copy.filter((item) => {
+        const codecType = this.selectedCodecTypeOption.trim();
+        return codecType === "-" || item.flags[0] === codecType;
+      }).filter((item) => {
+        const searchText = this.searchText.trim().toLowerCase();
+        return searchText.length == 0 ||
+          item.description.toLowerCase().includes(searchText) ||
+          item.codec_name.toLowerCase().includes(searchText);
+      });
+      this.filteredCodecs = ref(copy);
     },
   },
 }
