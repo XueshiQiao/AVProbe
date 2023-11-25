@@ -244,10 +244,9 @@ export default {
       </a-menu>
     </a-layout-sider>
 
-    <a-layout-content style="margin: 0 16px">
-        <h2>Codecs</h2>
-      <Codecs :codecs="decoders" name="decoders" v-if="selectedKeys[0] === 'decoders'"/>
-      <Codecs :codecs="encoders" name="encoders" v-if="selectedKeys[0] === 'encoders'"/>
+    <a-layout-content style="margin: 16px">
+      <Codecs :codecs="decoders" name="Decoders"      v-if="selectedKeys[0] === 'decoders'"/>
+      <Codecs :codecs="encoders" name="Encoders" v-else-if="selectedKeys[0] === 'encoders'"/>
     </a-layout-content>
 
   </a-layout>

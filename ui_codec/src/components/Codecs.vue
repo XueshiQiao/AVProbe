@@ -1,5 +1,5 @@
 <template>
-  <h2>{{ name }}</h2>
+  <a-typography-title :level="4"> {{ name }}</a-typography-title>
   <a-table :columns="columns" :dataSource="codecs" bordered :pagination="{ defaultPageSize: 15, pageSizeOptions: ['10', '15', '50', '100', '200'], showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items` }">
     <template #bodyCell="{ column, text, record }">
       {{ text }}

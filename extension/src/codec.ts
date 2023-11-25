@@ -60,7 +60,7 @@ export class CatCodingPanel {
 
 		this._panel.webview.onDidReceiveMessage(e => this.onMessage(e, panel));
 
-		this._panel.title = "ffmpeg codecs";
+		this._panel.title = "Codecs supported by FFmpeg";
 		this._panel.webview.html = this._getHtmlForWebview(this._panel.webview, panel);
 
 		// Listen for when the panel is disposed
