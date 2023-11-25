@@ -332,7 +332,7 @@ export class AVProbeEditorProvider implements
       enableScripts: true,
       localResourceRoots: [
         vscode.Uri.file(
-            path.join(this._context.extensionPath, 'vue-dist', 'assets')),
+            path.join(this._context.extensionPath, 'vue-dist-avprobe', 'assets')),
       ],
     };
     webviewPanel.webview.html =
@@ -400,12 +400,10 @@ export class AVProbeEditorProvider implements
     const dependencyNameList: string[] = [
       'index.css',
       'index.js',
-      'vendor.js',
-      'logo.png',
     ];
     const dependencyList: vscode.Uri[] = dependencyNameList.map(
         (item) => webviewPanel.webview.asWebviewUri(vscode.Uri.file(path.join(
-            this._context.extensionPath, 'vue-dist', 'assets', item))));
+            this._context.extensionPath, 'vue-dist-avprobe', 'assets', item))));
 
     // Use a nonce to whitelist which scripts can be run
     const nonce = getNonce();
@@ -420,8 +418,6 @@ export class AVProbeEditorProvider implements
 		<html lang="en">
 			<head>
 				<meta name="viewport" content="width=device-width, initial-scale=1">
-
-
 				<title>AVProbe extension</title>
 				<style>
 					body {
@@ -431,20 +427,14 @@ export class AVProbeEditorProvider implements
 				<script>
 					const vscode = acquireVsCodeApi();
 				</script>
-				<link href="${
-        styleVSCodeUri}" rel="stylesheet" />
-				<script type="module" crossorigin src="${
-        dependencyList[1]}"></script>
-				<!-- <link rel="modulepreload" href="${
-        dependencyList[2]}"> -->
-				<link rel="stylesheet" href="${
-        dependencyList[0]}" />
+				<link href="${styleVSCodeUri}" rel="stylesheet" />
+				<script type="module" crossorigin src="${dependencyList[1]}"></script>
+				<link rel="stylesheet" href="${dependencyList[0]}" />
 			</head>
 			<body>
 				<div id="app"></div>
 			</body>
 		</html>
-
 			`;
   }
 
@@ -469,16 +459,6 @@ export class AVProbeEditorProvider implements
       document: AVFileDocument, message: any,
       webviewPanel: vscode.WebviewPanel) {
     switch (message.type) {
-      case 'stroke':
-        // document.makeEdit(message as PawDrawEdit);
-        return;
-
-      case 'response': {
-        const callback = this._callbacks.get(message.requestId);
-        callback?.(message.body);
-        return;
-      }
-
       case 'probe': {
         FFProbe.probeMediaInfo(document.uri.path)
             .then((info) => {

@@ -29,17 +29,31 @@
 		{
 			"type": "npm",
 			"script": "build",
-			"path": "ui",
+			"path": "ui_avprobe",
 			"group": "build",
 			"problemMatcher": [],
-			"label": "npm: build --ui",
+			"label": "npm: build -- ui_avprobe",
 			// 进入 ui 目录，执行 build 操作，把 vue 相关文件打包为 js/css 文件
-			"detail": "cd ui; npm run build"
+			"detail": "cd ui_avprobe; npm run build"
+		},
+		{
+			"type": "npm",
+			"script": "build",
+			"path": "ui_codec",
+			"group": "build",
+			"problemMatcher": [],
+			"label": "npm: build -- ui_codec",
+			// 进入 ui 目录，执行 build 操作，把 vue 相关文件打包为 js/css 文件
+			"detail": "cd ui_codec; npm run build"
 		},
 		{
 			// this task depends on the two tasks above
 			"label": "build extension and ui",
-			"dependsOn":["npm: compile - extension", "npm: build --ui"]
+			"dependsOn": [
+				"npm: compile - extension",
+				"npm: build -- ui_codec",
+				"npm: build -- ui_avprobe"
+			]
 		}
 	]
 }

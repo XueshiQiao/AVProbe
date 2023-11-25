@@ -10,7 +10,7 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(AVProbeEditorProvider.register(context));
 	context.subscriptions.push(
 	vscode.commands.registerCommand('avprobe.decoders', () => {
-		CatCodingPanel.createOrShow(context.extensionUri);
+		CatCodingPanel.createOrShow(context);
 	})
 );
 }
