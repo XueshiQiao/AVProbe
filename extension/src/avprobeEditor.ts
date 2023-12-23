@@ -233,7 +233,7 @@ export class AVProbeEditorProvider implements
     const styleTableUri = webview.asWebviewUri(
         vscode.Uri.joinPath(this._context.extensionUri, 'media', 'table.css'));
 
-    const filePath = document.uri.path;
+    //const filePath = document.uri.path;
 
     const dependencyNameList: string[] = [
       'index.css',
@@ -296,10 +296,10 @@ export class AVProbeEditorProvider implements
   private onMessage(
       document: AVFileDocument, message: any,
       webviewPanel: vscode.WebviewPanel) {
+    // get file size of the media file
+    const filePath = document.uri.fsPath;
     switch (message.type) {
       case 'ready': {
-        // get file size of the media file
-        const filePath = document.uri.path;
         vscode.workspace.fs.stat(document.uri).then((stat) => {
           const fileSize = stat.size;
           console.log('fileSize: ', fileSize);
@@ -325,7 +325,7 @@ export class AVProbeEditorProvider implements
         return;
       }
       case 'probe': {
-        FFProbe.probeMediaInfo(document.uri.path)
+        FFProbe.probeMediaInfo(filePath)
             .then((info) => {
               console.log('probeMediaInfo: ', info);
               this.postMessage(
@@ -345,7 +345,7 @@ export class AVProbeEditorProvider implements
         } else {
           // nop, select all streams for default
         }
-        FFProbe.probeMediaInfoWithCustomArgs(document.uri.path, args)
+        FFProbe.probeMediaInfoWithCustomArgs(filePath, args)
             .then((info) => {
               console.log('probeMediaInfo: ', info);
               this.postMessage(webviewPanel, 'packets', JSON.stringify(info));
