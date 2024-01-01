@@ -1,7 +1,15 @@
 <template>
   <a-table :columns="columns" :dataSource="packetsInfo" bordered>
     <template #bodyCell="{ column, text, record }">
-      {{ text }}
+      <template v-if="column.key === 'view_frame'">
+        <!-- video only -->
+        <template v-if="record.codec_type === 'video'">
+          <a @click="viewFrame(record)">View Frame</a>
+        </template>
+      </template>
+      <template v-else>
+        {{ text }}
+      </template>
     </template>
   </a-table>
 </template>
@@ -18,6 +26,7 @@ export default {
       default: [],
     },
   },
+  emits: ["viewFrame"],
   data() {
     return {
       columns: ref([
@@ -71,11 +80,23 @@ export default {
           dataIndex: "flags",
           key: "flags",
         },
+        {
+          title: "Action",
+          key: "view_frame",
+          fixed: "right",
+          width: 100,
+        },
       ]),
       dataSource: ref([]),
     };
   },
   created() {},
+  methods: {
+    viewFrame(record) {
+      console.log("viewFrame: ", record);
+      this.$emit("viewFrame", record);
+    },
+  },
 };
 </script>
 

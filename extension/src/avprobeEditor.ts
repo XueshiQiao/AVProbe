@@ -1,9 +1,10 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
 
-import {FFProbe } from './avffmpeg';
+import {FFProbe, FFmpeg, FFmpegBMPFrame} from './avffmpeg';
 import {Disposable, disposeAll} from './dispose';
 import {getNonce} from './util';
+import { error } from 'console';
 
 interface AVFileDocumentDelegate {
   getFileData(): Promise<Uint8Array>;
@@ -354,6 +355,16 @@ export class AVProbeEditorProvider implements
               console.log('probeMediaInfo error: ', err);
             });
 
+        return;
+      }
+      case 'show_frame': {
+        const framePtsString = message.framePts;
+        FFmpeg.extractFrameAsBmp(filePath, framePtsString).then((info: FFmpegBMPFrame) => {
+          console.log("extractFrameAsBmp: ", info);
+          this.postMessage(webviewPanel, 'bmp_frame', info);
+        }).catch((error) => {
+          console.error("extractFrameAsBmp error: ", error);
+        });
         return;
       }
     }

@@ -31,6 +31,18 @@ export default {
   },
   created() {
     console.log("BasicMediaInfo.vue created");
+
+    window.addEventListener("message", async (e) => {
+      const { type, body, requestId } = e.data;
+      switch (type) {
+        case "bmp_frame": {
+          console.log("BasicMediaInfo.vue status: ", body.status, ", pts: ", body.pts, ", bmp_frame: ", body.base64ImageData);
+          this.framePts = body.pts;
+          this.base64ImageData = "data:image/bmp;base64, " + body.base64ImageData;
+          return;
+        }
+      }
+    });
   },
   data() {
     return {
@@ -90,6 +102,10 @@ export default {
       ]),
       selectedOption: ref("-1"),
       theme: theme,
+      base64ImageData: ref(""),
+      shouldShowFrame: ref(false),
+      loadedFrame: ref(false),
+      framePts: ref(""),
     };
   },
   methods: {
@@ -97,6 +113,16 @@ export default {
 			console.log("showPackets: ", this.selectedOption);
 			vscode.postMessage({ type: 'show_packets', streamIndex: this.selectedOption });
     },
+    showFrame(record) {
+      vscode.postMessage({ type: 'show_frame', framePts: record.pts_time });
+      this.framePts = record.pts_time;
+      this.shouldShowFrame = true;
+    },
+    onFrameWindowDismiss() {
+      // debugger;
+      this.framePts = "";
+      this.base64ImageData = "";
+    }
   },
 };
 </script>
@@ -122,8 +148,9 @@ export default {
     </template>
 
     <a-tab-pane key="packets_info" :tab="'Packets Info (total: ' + packetsInfo.length + ')'">
-      <PacketsTableView :packetsInfo="packetsInfo" />
+      <PacketsTableView :packetsInfo="packetsInfo" @view-frame="showFrame"/>
     </a-tab-pane>
+
     <template #rightExtra>
       <a-select :options="options" v-model:value="selectedOption"></a-select>
       <a-button @click="showPackets">
@@ -134,4 +161,10 @@ export default {
       </a-button>
     </template>
   </a-tabs>
+
+  <div>
+    <a-modal v-model:open="shouldShowFrame" height="0.5uw" :title="'VideoFrame @ ' + framePts " @ok="handleOK" @after-close="onFrameWindowDismiss">
+      <img :src="base64ImageData"/>
+    </a-modal>
+  </div>
 </template>

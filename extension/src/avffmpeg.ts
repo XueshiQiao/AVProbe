@@ -66,10 +66,38 @@ export class FFProbe {
   }
 }
 
+export type FFmpegBMPFrame = {
+  base64ImageData: string,
+  pts: string,
+  status: boolean
+};
 
 export class FFmpeg {
   public static async showDecodersInfo(): Promise<string> {
     return await this.execFFmpegCmd('ffmpeg -decoders');
+  }
+
+  public static async extractFrameAsBmp(filePath: string, framePts: string): Promise<FFmpegBMPFrame> {
+    const first_workspace = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath || "";
+    const temp_file_path = path.join(first_workspace, "avprobe_extracted_frame.bmp");
+    console.log("temp_file_path: ", temp_file_path);
+
+    return new Promise((resolve, reject) => {
+      FFmpeg.execFFmpegCmd(["-i", filePath, "-ss", framePts, "-vsync vfr", "-vframes 1", temp_file_path, "-y"])
+        .then((result) => {
+          // check if temp file exists
+          const temp_file_exists = fs.existsSync(temp_file_path);
+          if (temp_file_exists) {
+            const base64ed_image_buffer = fs.readFileSync(temp_file_path).toString('base64');
+            fs.rmSync(temp_file_path);
+            resolve({"base64ImageData" : base64ed_image_buffer, pts: framePts, "status" : true});
+          } else {
+            reject("Failed to extract frame from file, file not exists " + filePath);
+          }
+      }).catch((err) => {
+        reject("Failed to extract frame from file, err: " + err);
+      });
+    });
   }
 
   public static async execFFmpegCmd(params: any): Promise<string> {
