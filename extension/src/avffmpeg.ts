@@ -7,11 +7,41 @@ import * as fs from 'fs';
 // import * as ffmpeg from '@ffmpeg-installer/ffmpeg';
 // import * as ffprobe from '@ffprobe-installer/ffprobe';
 
+const vpx_codec_mapping = new Map([["vp8", "libvpx"], ["vp9", "libvpx-vp9"]]); // Creates a Map from an array of key-value pairs
+
 export class FFProbe {
   public static async probeMediaInfo(path: string): Promise<JSON> {
+
+    let input_decoder = "";
+    const useLibvpxForWebm = vscode.workspace.getConfiguration().get<boolean>('avprobe.uselibvpxForWebm');
+    if (useLibvpxForWebm) {
+      // check path ends with .webm
+      if (path.endsWith('.webm')) {
+        const video_codec = await this.probeVideoCodecName(path);
+
+        if (vpx_codec_mapping.get(video_codec)) {
+          input_decoder = "-c:v " + vpx_codec_mapping.get(video_codec) || "";
+        }
+      }
+    }
+
     return await this.probeMediaInfoWithCustomArgs(
         path,
-        '-hide_banner -v quiet -print_format json -show_format -show_streams');
+        '-hide_banner ' + input_decoder + ' -v quiet -print_format json -show_format -show_streams');
+  }
+
+  public static async probeVideoCodecName(path: string): Promise<string> {
+    const mediaInfo: any = await this.probeMediaInfoWithCustomArgs(
+      path,
+      '-hide_banner -select_streams v:0 -show_streams -print_format json');
+    if (mediaInfo['streams']) {
+      const videoStream = mediaInfo['streams'].find(
+        (stream: any) => stream['codec_type'] === 'video');
+      if (videoStream) {
+        return videoStream['codec_name'];
+      }
+    }
+    return '';
   }
 
   /**
@@ -58,11 +88,11 @@ export class FFProbe {
     };  // Increasing maxBuffer to 100MB
     const {stdout, stderr} = await execPromise(cmd, options);
     console.log('stdout size:', stdout.length);
-    if (stderr) {
-      return Promise.reject(stderr);
-    } else {
+    // if (stderr) {
+    //   return Promise.reject(stderr);
+    // } else {
       return Promise.resolve(JSON.parse(stdout));
-    }
+    // }
   }
 }
 

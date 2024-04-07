@@ -44,12 +44,17 @@
 				"avprobe.ffmpegPath": {
 					"type": "string",
 					"default": "",
-					"description": "Custom ffmpeg path"
+					"description": "Custom FFmpeg path"
 				},
 				"avprobe.ffprobePath": {
 					"type": "string",
 					"default": "",
-					"description": "Custom ffprobe path"
+					"description": "Custom FFprobe path"
+				},
+				"avprobe.uselibvpxForWebm": {
+					"type": "boolean",
+					"default": false,
+					"description": "Use libvpx / libvpx-vp9 for webm format to inspect yuva420 pixel format"
 				}
 			}
 		},
