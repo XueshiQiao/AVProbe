@@ -11,7 +11,8 @@ Display the information of Audio/Video files using the built-in ffmpeg/ffprobe.
 * [x] Support show decoder/encoder information supported by FFmpeg local/remote
   * [x] Show decoders/encoders list
   * [x] Support filtering by conditions like codec type and name
-* [ ] Preview specified frame
+* [x] Preview specified frame
+* [ ] Support live streams like RTMP or http-flv
 
 ## Screenshots
 ### Stream info
@@ -27,9 +28,9 @@ note: (demo with light theme, support both light and dark)
 ## How to use?
 
 ### 0. Prerequisite
-Install the ffprobe / ffmpeg command-line tool. AVProbe inspects media information through ffprobe, so you need to install ffprobe first.
-
-### 1. Config `ffprobe` path
+Install the ffprobe / ffmpeg command-line tool.
+AVProbe inspects media information through ffmpeg&ffprobe, so you need to install ffmpeg first.
+### 1. Config `ffmpeg` path & `ffprobe`
 
 ![Alt text](https://images.xueshi.io/screenshots/set_custom_ffprobe_path.png)
 
@@ -41,12 +42,23 @@ Simply right-click on the media file, then select ‘Audio/Video Probe’ to ope
 Open Command Palette, input "AVProbe" or "encoders"/"decoders" to access the command as follows
 ![Alt text](https://images.xueshi.io/screenshots/codecs_command.png)
 
-## Changelogs
 
-v0.1.2
-1. Presets basic info automatically without clicking any button
-2. Fix problem with media path contains empty characters
+## Development
 
-v0.1.0
-1. Upgrade to new UI (based on `vue 3` and `Ant Design vue`)
-2. Add screenshots
+### DEBUG extension in VSCode
+
+#### 1. Install dependencies:
+
+```bash
+# cd project_root;
+cd extension; npm install; cd -
+cd ui_avprobe; npm install; cd -
+cd ui_codec; npm install; cd -
+```
+
+#### 2. Open with vscode
+Open project folder with VSCode, then choose "Run -> Start Debugging" from menu bar
+
+```bash
+code .
+```
