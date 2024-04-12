@@ -1,9 +1,8 @@
 <script setup>
 import { ref } from "vue";
 import PacketsTableView from "./PacketsTableView.vue";
-import { TableOutlined } from '@ant-design/icons-vue';
-import { theme } from 'ant-design-vue';
-
+import { TableOutlined } from "@ant-design/icons-vue";
+import { theme } from "ant-design-vue";
 </script>
 <script>
 export default {
@@ -36,7 +35,14 @@ export default {
       const { type, body, requestId } = e.data;
       switch (type) {
         case "bmp_frame": {
-          console.log("BasicMediaInfo.vue status: ", body.status, ", pts: ", body.pts, ", bmp_frame: ", body.base64ImageData);
+          console.log(
+            "BasicMediaInfo.vue status: ",
+            body.status,
+            ", pts: ",
+            body.pts,
+            ", bmp_frame: ",
+            body.base64ImageData
+          );
           this.framePts = body.pts;
           this.base64ImageData = "data:image/bmp;base64, " + body.base64ImageData;
           return;
@@ -110,11 +116,11 @@ export default {
   },
   methods: {
     showPackets() {
-			console.log("showPackets: ", this.selectedOption);
-			vscode.postMessage({ type: 'show_packets', streamIndex: this.selectedOption });
+      console.log("showPackets: ", this.selectedOption);
+      vscode.postMessage({ type: "show_packets", streamIndex: this.selectedOption });
     },
     showFrame(record) {
-      vscode.postMessage({ type: 'show_frame', framePts: record.pts_time });
+      vscode.postMessage({ type: "show_frame", framePts: record.pts_time });
       this.framePts = record.pts_time;
       this.shouldShowFrame = true;
     },
@@ -122,7 +128,7 @@ export default {
       // debugger;
       this.framePts = "";
       this.base64ImageData = "";
-    }
+    },
   },
 };
 </script>
@@ -137,7 +143,10 @@ export default {
         </a-descriptions-item>
       </a-descriptions>
     </a-tab-pane>
-    <template v-for="stream in streamsInfo" :key="`Stream ${stream['index']} : ${stream['codec_type']}`">
+    <template
+      v-for="stream in streamsInfo"
+      :key="`Stream ${stream['index']} : ${stream['codec_type']}`"
+    >
       <a-tab-pane :tab="`Stream ${stream['index']} : ${stream['codec_type']}`">
         <a-descriptions title="" bordered size="small" :column="descriptionColumn">
           <a-descriptions-item v-for="(value, key) in stream" :key="key" :label="key">
@@ -147,8 +156,11 @@ export default {
       </a-tab-pane>
     </template>
 
-    <a-tab-pane key="packets_info" :tab="'Packets Info (total: ' + packetsInfo.length + ')'">
-      <PacketsTableView :packetsInfo="packetsInfo" @view-frame="showFrame"/>
+    <a-tab-pane
+      key="packets_info"
+      :tab="'Packets Info (total: ' + packetsInfo.length + ')'"
+    >
+      <PacketsTableView :packetsInfo="packetsInfo" @view-frame="showFrame" />
     </a-tab-pane>
 
     <template #rightExtra>
@@ -163,8 +175,14 @@ export default {
   </a-tabs>
 
   <div>
-    <a-modal v-model:open="shouldShowFrame" height="0.5uw" :title="'VideoFrame @ ' + framePts " @ok="handleOK" @after-close="onFrameWindowDismiss">
-      <img :src="base64ImageData"/>
+    <a-modal
+      v-model:open="shouldShowFrame"
+      height="0.5uw"
+      :title="'VideoFrame @ ' + framePts"
+      @ok="handleOK"
+      @after-close="onFrameWindowDismiss"
+    >
+      <img :src="base64ImageData" />
     </a-modal>
   </div>
 </template>

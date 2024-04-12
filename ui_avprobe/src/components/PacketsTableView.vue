@@ -1,5 +1,5 @@
 <template>
-  <a-table :columns="columns" :dataSource="packetsInfo" bordered>
+  <a-table :columns="columns" :dataSource="packetsInfo" :pagination="pagination" bordered>
     <template #bodyCell="{ column, text, record }">
       <template v-if="column.key === 'view_frame'">
         <!-- video only -->
@@ -31,7 +31,12 @@ export default {
     return {
       columns: ref([
         {
-          title: "codec_type",
+          title: "index",
+          dataIndex: "index",
+          key: "index",
+        },
+        {
+          title: "type",
           dataIndex: "codec_type",
           key: "codec_type",
         },
@@ -88,6 +93,15 @@ export default {
         },
       ]),
       dataSource: ref([]),
+
+      // doc for pagination: https://antdv.com/components/pagination/
+      pagination: ref({
+        defaultCurrent: 1,
+        defaultPageSize: 10,
+        showQuickJumper: true,
+        // show total is a function
+        showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+      }),
     };
   },
   created() {},

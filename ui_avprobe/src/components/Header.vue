@@ -99,6 +99,7 @@ export default {
           ) {
             this.packetsInfo = packetsDict["packets"];
             this.packetsInfo.forEach((packet, index) => {
+              packet["index"] = index;
               packet["key"] = index.toString();
             });
           }
