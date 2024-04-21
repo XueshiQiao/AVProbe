@@ -162,12 +162,11 @@ export default {
               <a-descriptions-item label="Path">
                 {{ fileInfo["filePath"] }}
               </a-descriptions-item>
-              <a-descriptions-item label="Size">
-                {{ (fileInfo["fileSize"] / 1000.0 / 1000.0).toFixed(2) }} MB ({{
-                  fileInfo["fileSize"]
-                }}
-                bytes)
-              </a-descriptions-item>
+                <a-descriptions-item label="Size">
+                {{
+                  (fileInfo["fileSize"] / 1000.0 / 1000.0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                }} MB ({{ fileInfo["fileSize"].toLocaleString() }} bytes)
+                </a-descriptions-item>
             </a-descriptions>
           </a-card>
         </a-col>

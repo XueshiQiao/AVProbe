@@ -1,7 +1,8 @@
 <script setup>
 import { ref } from "vue";
 import PacketsTableView from "./PacketsTableView.vue";
-import { TableOutlined } from "@ant-design/icons-vue";
+import { InfoCircleOutlined, AudioOutlined, VideoCameraOutlined, FileTextOutlined } from "@ant-design/icons-vue";
+import { InfoCircleFilled, AudioFilled, VideoCameraFilled, FileTextFilled, ProfileFilled } from "@ant-design/icons-vue";
 import { theme } from "ant-design-vue";
 </script>
 <script>
@@ -139,8 +140,14 @@ export default {
 </script>
 
 <template>
-  <a-tabs v-model:activeKey="activeKey">
-    <a-tab-pane key="0" tab="Basic Media Info" v-if="Object.keys(formatInfo).length > 0">
+  <a-tabs v-model:activeKey="activeKey" type="card">
+    <a-tab-pane key="0" v-if="Object.keys(formatInfo).length > 0">
+      <template #tab>
+        <span>
+          <InfoCircleFilled />
+          Basic Media Info
+        </span>
+      </template>
       <a-descriptions title="" bordered size="small" :column="descriptionColumn">
         <!-- iterator all key values in mediaInfo['format'] -->
         <a-descriptions-item v-for="(value, key) in formatInfo" :key="key" :label="key">
@@ -152,7 +159,17 @@ export default {
       v-for="stream in streamsInfo"
       :key="`Stream ${stream['index']} : ${stream['codec_type']}`"
     >
-      <a-tab-pane :tab="`Stream ${stream['index']} : ${stream['codec_type']}`">
+      <a-tab-pane>
+        <template #tab>
+          <span>
+            <AudioFilled v-if="stream['codec_type'] === 'audio'" />
+            <VideoCameraFilled v-else-if="stream['codec_type'] === 'video'" />
+            <FileTextFilled v-else/>
+
+            {{ `Stream ${stream['index']} : ${stream['codec_type']}` }}
+          </span>
+        </template>
+
         <a-descriptions title="" bordered size="small" :column="descriptionColumn">
           <a-descriptions-item v-for="(value, key) in stream" :key="key" :label="key">
             {{ value }}
@@ -163,19 +180,18 @@ export default {
 
     <a-tab-pane
       :key="showPacketPanelKey"
-      :tab="'Packets Info (total: ' + packetsInfo.length + ')'"
     >
+      <template #tab>
+        <span>
+          <ProfileFilled />
+          {{ `Packets Info (total: ${packetsInfo.length})` }}
+        </span>
+      </template>
       <PacketsTableView :packetsInfo="packetsInfo" @view-frame="showFrame" />
     </a-tab-pane>
 
     <template v-if="activeKey === showPacketPanelKey" #rightExtra>
       <a-select :options="options" v-model:value="selectedOption" @change="showPackets"></a-select>
-      <!-- <a-button @click="showPackets">
-        <template #icon>
-          <TableOutlined />
-        </template>
-        Show packets
-      </a-button> -->
     </template>
   </a-tabs>
 
