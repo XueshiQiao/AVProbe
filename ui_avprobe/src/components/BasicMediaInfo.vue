@@ -10,7 +10,7 @@ export default {
     formatInfo: {
       type: Object,
       required: true,
-      default: "Hello, world!",
+      default: {},
     },
     streamsInfo: {
       type: Array,
@@ -49,6 +49,10 @@ export default {
         }
       }
     });
+  },
+  mounted() {
+    console.log("BasicMediaInfo.vue mounted, load all packets info.");
+    this.showPackets();
   },
   data() {
     return {
@@ -158,20 +162,20 @@ export default {
     </template>
 
     <a-tab-pane
-      :key=showPacketPanelKey
+      :key="showPacketPanelKey"
       :tab="'Packets Info (total: ' + packetsInfo.length + ')'"
     >
       <PacketsTableView :packetsInfo="packetsInfo" @view-frame="showFrame" />
     </a-tab-pane>
 
     <template v-if="activeKey === showPacketPanelKey" #rightExtra>
-      <a-select :options="options" v-model:value="selectedOption"></a-select>
-      <a-button @click="showPackets">
+      <a-select :options="options" v-model:value="selectedOption" @change="showPackets"></a-select>
+      <!-- <a-button @click="showPackets">
         <template #icon>
           <TableOutlined />
         </template>
         Show packets
-      </a-button>
+      </a-button> -->
     </template>
   </a-tabs>
 
