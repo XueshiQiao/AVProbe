@@ -112,6 +112,7 @@ export default {
       shouldShowFrame: ref(false),
       loadedFrame: ref(false),
       framePts: ref(""),
+      showPacketPanelKey: ref("packet_info"),
     };
   },
   methods: {
@@ -157,13 +158,13 @@ export default {
     </template>
 
     <a-tab-pane
-      key="packets_info"
+      :key=showPacketPanelKey
       :tab="'Packets Info (total: ' + packetsInfo.length + ')'"
     >
       <PacketsTableView :packetsInfo="packetsInfo" @view-frame="showFrame" />
     </a-tab-pane>
 
-    <template #rightExtra>
+    <template v-if="activeKey === showPacketPanelKey" #rightExtra>
       <a-select :options="options" v-model:value="selectedOption"></a-select>
       <a-button @click="showPackets">
         <template #icon>
