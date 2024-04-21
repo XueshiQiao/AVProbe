@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as util from 'util';
 import * as child_process from 'child_process';
 import * as fs from 'fs';
+import { ExtensionOptions } from './extension_options';
 
 // import * as ffmpeg from '@ffmpeg-installer/ffmpeg';
 // import * as ffprobe from '@ffprobe-installer/ffprobe';
@@ -26,8 +27,7 @@ export class FFProbe {
     const execPromise = util.promisify(child_process.exec);
 
     let cmd = null;
-    const custom_ffprobe_path: any =
-        vscode.workspace.getConfiguration().get('avprobe.ffprobePath');
+    const custom_ffprobe_path: any = ExtensionOptions.getFFprobePath();
     if (custom_ffprobe_path) {
       if (custom_ffprobe_path.length > 0 &&
           fs.existsSync(custom_ffprobe_path)) {
@@ -42,7 +42,7 @@ export class FFProbe {
           ', please make sure it is a valid path.');
       return Promise.reject(
           'Custom ffprobe path may not exist: ' + custom_ffprobe_path +
-          ', please configure it in setting with key \'avprobe.ffprobePath\'');
+          ', please configure it in setting with key \''+ ExtensionOptions.FFprobePathOptionKey +'\'');
     }
 
     if (typeof params === 'string') {
@@ -103,8 +103,7 @@ export class FFmpeg {
   public static async execFFmpegCmd(params: any): Promise<string> {
     const execPromise = util.promisify(child_process.exec);
     let cmd = null;
-    const custom_ffmpeg_path: any =
-        vscode.workspace.getConfiguration().get('avprobe.ffmpegPath');
+    const custom_ffmpeg_path: any = ExtensionOptions.getFFmpegPath();
     if (custom_ffmpeg_path) {
       if (custom_ffmpeg_path.length > 0 && fs.existsSync(custom_ffmpeg_path)) {
         cmd = custom_ffmpeg_path;
@@ -118,7 +117,7 @@ export class FFmpeg {
           ', please make sure it is a valid path.');
       return Promise.reject(
           'Custom FFmpeg path may not exist: ' + custom_ffmpeg_path +
-          ', please configure it in setting with key \'avprobe.ffmpegPath\'');
+          ', please configure it in setting with key \'' + ExtensionOptions.FFmpegPathOptionKey + '\'');
     }
 
 		cmd += " -hide_banner -v quiet ";

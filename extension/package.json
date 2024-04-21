@@ -50,6 +50,11 @@
 					"type": "string",
 					"default": "",
 					"description": "Custom ffprobe path"
+				},
+				"avprobe.packetInfo.pageSize": {
+					"type": "number",
+					"default": 10,
+					"description": "Number of packets to show in packet info, could be one of [10, 15, 20, 50, 100]"
 				}
 			}
 		},

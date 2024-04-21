@@ -4,7 +4,7 @@
       <template v-if="column.key === 'view_frame'">
         <!-- video only -->
         <template v-if="record.codec_type === 'video'">
-          <a @click="viewFrame(record)">View Frame</a>
+          <a @click="viewFrame(record)">View</a>
         </template>
       </template>
       <template v-else>
@@ -25,6 +25,11 @@ export default {
       required: true,
       default: [],
     },
+    tablePageSize: {
+      type: Number,
+      required: true,
+      default: 10,
+    }
   },
   emits: ["viewFrame"],
   data() {
@@ -97,7 +102,8 @@ export default {
       // doc for pagination: https://antdv.com/components/pagination/
       pagination: ref({
         defaultCurrent: 1,
-        defaultPageSize: 10,
+        defaultPageSize: this.tablePageSize,
+        pageSizeOptions: ["10", "15", "20", "50", "100"],
         showQuickJumper: true,
         // show total is a function
         showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,

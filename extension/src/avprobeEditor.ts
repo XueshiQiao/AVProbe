@@ -5,6 +5,7 @@ import {FFProbe, FFmpeg, FFmpegBMPFrame} from './avffmpeg';
 import {Disposable, disposeAll} from './dispose';
 import {getNonce} from './util';
 import { error } from 'console';
+import { ExtensionOptions } from './extension_options';
 
 interface AVFileDocumentDelegate {
   getFileData(): Promise<Uint8Array>;
@@ -364,6 +365,15 @@ export class AVProbeEditorProvider implements
           this.postMessage(webviewPanel, 'bmp_frame', info);
         }).catch((error) => {
           console.error("extractFrameAsBmp error: ", error);
+        });
+        return;
+      }
+      case "get_extension_options": {
+        console.log("options: ", message);
+        this.postMessage(webviewPanel, 'extension_options', {
+          "ffmpegPath": ExtensionOptions.getFFmpegPath(),
+          "ffprobePath": ExtensionOptions.getFFprobePath(),
+          "tablePageSize": ExtensionOptions.getTablePageSize(),
         });
         return;
       }

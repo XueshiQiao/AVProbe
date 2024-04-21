@@ -1,8 +1,13 @@
 <script setup>
 import { ref } from "vue";
 import PacketsTableView from "./PacketsTableView.vue";
-import { InfoCircleOutlined, AudioOutlined, VideoCameraOutlined, FileTextOutlined } from "@ant-design/icons-vue";
-import { InfoCircleFilled, AudioFilled, VideoCameraFilled, FileTextFilled, ProfileFilled } from "@ant-design/icons-vue";
+import {
+  InfoCircleFilled,
+  AudioFilled,
+  VideoCameraFilled,
+  FileTextFilled,
+  ProfileFilled,
+} from "@ant-design/icons-vue";
 import { theme } from "ant-design-vue";
 </script>
 <script>
@@ -27,7 +32,7 @@ export default {
       type: Array,
       required: true,
       default: [],
-    },
+    }
   },
   created() {
     console.log("BasicMediaInfo.vue created");
@@ -48,11 +53,19 @@ export default {
           this.base64ImageData = "data:image/bmp;base64, " + body.base64ImageData;
           return;
         }
+        case "extension_options": {
+          console.log("BasicMediaInfo.vue Receive 'extension_options' message from vscode extension, body: ", body);
+          this.tablePageSize = body.tablePageSize;
+          return;
+        }
       }
     });
+
+    vscode.postMessage({ type: "get_extension_options" });
   },
   mounted() {
     console.log("BasicMediaInfo.vue mounted, load all packets info.");
+    console.log("default page size: ", this.tablePageSize);
     this.showPackets();
   },
   data() {
@@ -118,6 +131,7 @@ export default {
       loadedFrame: ref(false),
       framePts: ref(""),
       showPacketPanelKey: ref("packet_info"),
+      tablePageSize: ref(10),
     };
   },
   methods: {
@@ -164,9 +178,9 @@ export default {
           <span>
             <AudioFilled v-if="stream['codec_type'] === 'audio'" />
             <VideoCameraFilled v-else-if="stream['codec_type'] === 'video'" />
-            <FileTextFilled v-else/>
+            <FileTextFilled v-else />
 
-            {{ `Stream ${stream['index']} : ${stream['codec_type']}` }}
+            {{ `Stream ${stream["index"]} : ${stream["codec_type"]}` }}
           </span>
         </template>
 
@@ -178,20 +192,26 @@ export default {
       </a-tab-pane>
     </template>
 
-    <a-tab-pane
-      :key="showPacketPanelKey"
-    >
+    <a-tab-pane :key="showPacketPanelKey">
       <template #tab>
         <span>
           <ProfileFilled />
           {{ `Packets Info (total: ${packetsInfo.length})` }}
         </span>
       </template>
-      <PacketsTableView :packetsInfo="packetsInfo" @view-frame="showFrame" />
+      <PacketsTableView
+        :packetsInfo="packetsInfo"
+        @view-frame="showFrame"
+        :tablePageSize="tablePageSize"
+      />
     </a-tab-pane>
 
     <template v-if="activeKey === showPacketPanelKey" #rightExtra>
-      <a-select :options="options" v-model:value="selectedOption" @change="showPackets"></a-select>
+      <a-select
+        :options="options"
+        v-model:value="selectedOption"
+        @change="showPackets"
+      ></a-select>
     </template>
   </a-tabs>
 
