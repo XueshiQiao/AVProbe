@@ -1,6 +1,8 @@
 # AVProbe (VSCode Extension)
 Display the information of Audio/Video files using the built-in ffmpeg/ffprobe.
 
+Core functionality is built upon FFmpeg, while the user interface leverages Vue and [Ant-Design-Vue](https://github.com/vueComponent/ant-design-vue).
+
 ## Features
 * [x] Support mp4/mkv/mov/webm and others
 * [x] Display basic information such as streams, formats, etc
