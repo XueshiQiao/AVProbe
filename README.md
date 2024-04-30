@@ -4,6 +4,8 @@ Display the information of Audio/Video files using the built-in ffmpeg/ffprobe.
 Core functionality is built upon FFmpeg, while the user interface leverages Vue and [Ant-Design-Vue](https://github.com/vueComponent/ant-design-vue).
 
 ## Features
+* [x] Support macOS, Windows, Linux
+* [x] Support VSCode Remote / Dev containers
 * [x] Support mp4/mkv/mov/webm and others
 * [x] Display basic information such as streams, formats, etc
 * [x] Presents packets information in a table format
