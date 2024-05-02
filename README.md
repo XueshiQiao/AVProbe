@@ -16,6 +16,7 @@ Core functionality is built upon FFmpeg, while the user interface leverages Vue 
   * [x] Show decoders/encoders list
   * [x] Support filtering by conditions like codec type and name
 * [x] Preview specified frame
+* [x] Support filter packets (Show key frames only)
 * [ ] Support live streams like RTMP or http-flv
 
 ## Screenshots

@@ -22,6 +22,7 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
+    - run: cp ./LICENSE ./README.md extension/
     - run: cd ui_avprobe; npm install
     - run: cd ui_avprobe; npm run build
     - run: cd ui_codec; npm install
