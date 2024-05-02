@@ -32,7 +32,13 @@ export default {
       type: Array,
       required: true,
       default: [],
-    }
+    },
+  },
+  watch: {
+    packetsInfo(newPacketsInfo) {
+      console.log("packetsInfo updated:", newPacketsInfo);
+      this.packets = newPacketsInfo.filter(this.packetFilter);
+    },
   },
   created() {
     console.log("BasicMediaInfo.vue created");
@@ -132,6 +138,15 @@ export default {
       framePts: ref(""),
       showPacketPanelKey: ref("packet_info"),
       tablePageSize: ref(10),
+      toggle_key_frames_options: [
+        { label: "--- No Filter ---", value: 0 },
+        { label: "Key Frames Only", value: 1 },
+      ],
+      show_key_frames_only: 0,
+      packetFilter: function (packet) {
+        return true;
+      },
+      packets: ref([]),
     };
   },
   methods: {
@@ -139,11 +154,25 @@ export default {
       console.log("showPackets: ", this.selectedOption);
       vscode.postMessage({ type: "show_packets", streamIndex: this.selectedOption });
     },
+
+    toggle_key_frames() {
+      console.log("toggle_key_frames: ", this.show_key_frames_only);
+      this.packetFilter = (packet) => {
+        if (this.show_key_frames_only === 1) {
+          return packet.flags.includes("K");
+        } else {
+          return true;
+        }
+      };
+      this.showPackets();
+    },
+
     showFrame(record) {
       vscode.postMessage({ type: "show_frame", framePts: record.pts_time });
       this.framePts = record.pts_time;
       this.shouldShowFrame = true;
     },
+
     onFrameWindowDismiss() {
       // debugger;
       this.framePts = "";
@@ -196,11 +225,11 @@ export default {
       <template #tab>
         <span>
           <ProfileFilled />
-          {{ `Packets Info (total: ${packetsInfo.length})` }}
+          {{ `Packets Info (total: ${packets.length})` }}
         </span>
       </template>
       <PacketsTableView
-        :packetsInfo="packetsInfo"
+        :packetsInfo="packets"
         @view-frame="showFrame"
         :tablePageSize="tablePageSize"
       />
@@ -211,6 +240,12 @@ export default {
         :options="options"
         v-model:value="selectedOption"
         @change="showPackets"
+      ></a-select>
+      <a-divider type="vertical" />
+      <a-select
+        :options="toggle_key_frames_options"
+        v-model:value="show_key_frames_only"
+        @change="toggle_key_frames"
       ></a-select>
     </template>
   </a-tabs>
