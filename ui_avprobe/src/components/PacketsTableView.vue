@@ -7,6 +7,13 @@
           <a @click="viewFrame(record)">View</a>
         </template>
       </template>
+      <template v-else-if="column.key === 'flags'">
+        <span>
+          <a-tag v-for="flag_pair in record.flags_pair" :key="flag_pair['tag']" :color="flag_pair['color']">
+            {{ flag_pair["tag"].toUpperCase() }}
+          </a-tag>
+        </span>
+      </template>
       <template v-else>
         {{ text }}
       </template>

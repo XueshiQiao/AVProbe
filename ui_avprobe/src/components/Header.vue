@@ -101,6 +101,26 @@ export default {
             this.packetsInfo.forEach((packet, index) => {
               packet["index"] = index;
               packet["key"] = index.toString();
+              packet['flags_pair'] = packet["flags"].split("").map((flag) => {
+                if (flag === "K") {
+                  return {
+                    "tag": "Key",
+                    "color": "green"
+                  }
+                } else if (flag === "D") {
+                  return {
+                    "tag": "Discard",
+                    "color": "red"
+                  }
+                } else if (flag === "C") {
+                  return {
+                    "tag": "Corrupt",
+                    "color": "purple"
+                  }
+                } else { // flag === "_"
+                  return null;
+                }
+              }).filter((flag) => flag !== null);
             });
           }
           console.log(
