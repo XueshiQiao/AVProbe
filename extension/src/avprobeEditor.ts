@@ -12,7 +12,7 @@ interface AVFileDocumentDelegate {
 }
 
 /**
- * Define the document (the data model) used for paw draw files.
+ * Define the document (the data model) used for media files.
  */
 class AVFileDocument extends Disposable implements vscode.CustomDocument {
   static async create(
@@ -91,47 +91,10 @@ class AVFileDocument extends Disposable implements vscode.CustomDocument {
   }
 }
 
-/**
- * Provider for paw draw editors.
- *
- * Paw draw editors are used for `.pawDraw` files, which are just `.png` files
- * with a different file extension.
- *
- * This provider demonstrates:
- *
- * - How to implement a custom editor for binary files.
- * - Setting up the initial webview for a custom editor.
- * - Loading scripts and styles in a custom editor.
- * - Communication between VS Code and the custom editor.
- * - Using CustomDocuments to store information that is shared between multiple
- * custom editors.
- * - Implementing save, undo, redo, and revert.
- * - Backing up a custom editor.
- */
 export class AVProbeEditorProvider implements
     vscode.CustomReadonlyEditorProvider<AVFileDocument> {
-  private static newPawDrawFileId = 1;
 
   public static register(context: vscode.ExtensionContext): vscode.Disposable {
-    vscode.commands.registerCommand('catCustoms.pawDraw.new', () => {
-      const workspaceFolders = vscode.workspace.workspaceFolders;
-      if (!workspaceFolders) {
-        vscode.window.showErrorMessage(
-            'Creating new Paw Draw files currently requires opening a workspace');
-        return;
-      }
-
-      const uri =
-          vscode.Uri
-              .joinPath(
-                  workspaceFolders[0].uri,
-                  `new-${AVProbeEditorProvider.newPawDrawFileId++}.pawdraw`)
-              .with({scheme: 'untitled'});
-
-      vscode.commands.executeCommand(
-          'vscode.openWith', uri, AVProbeEditorProvider.viewType);
-    });
-
     return vscode.window.registerCustomEditorProvider(
         AVProbeEditorProvider.viewType, new AVProbeEditorProvider(context), {
           // For this demo extension, we enable `retainContextWhenHidden` which

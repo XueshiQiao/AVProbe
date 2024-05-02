@@ -1,8 +1,5 @@
 import * as vscode from 'vscode';
-/* import { CatScratchEditorProvider } from './catScratchEditor';
-import { PawDrawEditorProvider } from './pawDrawEditor';
- */
-import {AVProbeEditorProvider} from './avprobeEditor';
+import { AVProbeEditorProvider } from './avprobeEditor';
 import { CatCodingPanel } from './codec';
 
 export function activate(context: vscode.ExtensionContext) {
