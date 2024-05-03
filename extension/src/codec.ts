@@ -179,22 +179,24 @@ export class CatCodingPanel {
             });
         return;
       }
-			case 'show_decoder_info': {
-				const decoderName = message.decoderName;
-				if (decoderName) {
-					FFmpeg.execFFmpegCmd(['-help', 'decoder', decoderName])
+			case 'show_codec_detail': {
+				const isEncoder = message.isEncoder;
+				const codecName = message.codecName;
+				if (codecName) {
+					const key = isEncoder ? 'encoder' : 'decoder';
+					FFmpeg.execFFmpegCmd(['-help', key + "=" + codecName])
 						.then((info) => {
-							console.log('showDecoderInfo: ', info);
-							this.postMessage(webviewPanel, 'show_decoder_info', info);
+							console.log('show_codec_detail: ', info);
+							this.postMessage(webviewPanel, 'show_codec_detail', info);
 						}
 					)
 						.catch((err) => {
-							console.log('showDecoderInfo error: ', err);
+							console.log('show_codec_detail error: ', err);
 						}
 					);
 				}
         return;
-      }
+			}
     }
   }
 }

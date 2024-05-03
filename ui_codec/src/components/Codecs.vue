@@ -180,6 +180,11 @@ export default {
     },
     checkOptions(codec) {
       console.log("Codecs.vue checkOptions, codec: ", codec);
+      vscode.postMessage({
+        type: "show_codec_detail",
+        isEncoder: codec.is_encoder,
+        codecName: codec.codec_name,
+      });
     },
   },
 };

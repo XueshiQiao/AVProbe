@@ -36,7 +36,7 @@ function parseFlags(flags_str, flags_map) {
   };
 }
 
-function parseCodecs(input) {
+function parseCodecs(input, is_encoder) {
   const regex1 = /(\S+)\s+(=)\s+(.*)/;
   const regex2 = /(\S+)\s+(\S+)\s+(.*)/;
 
@@ -71,6 +71,7 @@ function parseCodecs(input) {
 	const completed = codecs_array.map((codec) => {
 		const flags_detail_array = parseFlags(codec[0], flags_map)
     return {
+      is_encoder,
       codec_name: codec[1],
       description: codec[2],
       flags: codec[0],
@@ -114,7 +115,7 @@ export default {
         }
 				case "show_decoders": {
 					console.log("receive body:", body);
-					this.decoders = parseCodecs(body);
+					this.decoders = parseCodecs(body, false);
 					console.log(
 						"Header.vue Receive 'show_decoders' message from vscode extension, decoders: ",
 						this.decoders
@@ -123,7 +124,7 @@ export default {
 				};
 				case "show_encoders": {
 					console.log("receive body:", body);
-					this.encoders = parseCodecs(body);
+					this.encoders = parseCodecs(body, true);
 					console.log(
 						"Header.vue Receive 'show_decoders' message from vscode extension, decoders: ",
 						this.encoders
