@@ -5,8 +5,12 @@
       <a-typography-text>Codec Type: </a-typography-text>
       <a-select style="width: 100px;" :options="codecTypeOptions" v-model:value="selectedCodecTypeOption" @select="onCodecTypeOptionSelected"></a-select>
       <a-typography-text>Filter with keywords: </a-typography-text>
-      <a-input-search v-model:value="searchText" @search="onSearch" placeholder="keywords" style="width: 200px">
-      </a-input-search>
+      <a-auto-complete
+        v-model:value="searchText"
+        :options="[{ value: '264' }, { value: 'hevc' }, {value: 'vpx'}, {value: 'av1'}, {value: 'aac'}, {value: 'mp3'}, {value: 'opus'}]"
+        style="width: 200px"
+        placeholder="codec name or description"
+      />
     </a-flex>
     <a-table :columns="columns" :dataSource="filteredCodecs" bordered :pagination="{ defaultPageSize: 15, pageSizeOptions: ['10', '15', '50', '100', '200'], showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items` }">
       <template #bodyCell="{ column, text, record }">
