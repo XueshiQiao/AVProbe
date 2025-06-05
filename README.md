@@ -38,6 +38,7 @@ AVProbe inspects media information through ffmpeg&ffprobe, so you need to instal
 ### 1. Config `ffmpeg` path & `ffprobe`
 
 ![Alt text](https://images.xueshi.io/screenshots/set_custom_ffprobe_path.png)
+Note: In the Windows system, the Ffmpeg Path and the Ffprobe Path need to use absolute paths, such as "D:\ffmpeg-7.1-full_build\bin\ffprobe.exe".
 
 ### 2. Open media files with 'AVProbe'
 Simply right-click on the media file, then select ‘Audio/Video Probe’ to open it
